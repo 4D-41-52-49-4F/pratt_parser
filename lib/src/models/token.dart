@@ -1,9 +1,5 @@
-class Token {
-  final TokenType type;
-  final String value;
-  Token(this.type, this.value);
-  @override
-  String toString() => '$type($value)';
+class Tokenizer {
+  const Tokenizer();
 
   List<Token> tokenize(String input) {
     final tokens = <Token>[];
@@ -73,6 +69,14 @@ class Token {
   bool _isParenthese(String c) => '{[()]}'.contains(c);
   bool _isObjectSeperator(String c) => c == '.';
   bool _isLetter(String c) => RegExp('[A-Za-z_]').hasMatch(c);
+}
+
+class Token {
+  final TokenType type;
+  final String value;
+  Token(this.type, this.value);
+  @override
+  String toString() => '$type($value)';
 }
 
 enum TokenType { number, parenthese, operator, identifier, object, objectSeperator }
