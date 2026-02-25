@@ -1,21 +1,43 @@
+import 'package:abschlussprojekt/src/models/syntax_parser/_function_registry/_function_registry.dart';
 import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/syntax_element.dart';
-import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/syntax_operator.dart';
+import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/_operator/syntax_operator.dart';
+import 'package:abschlussprojekt/src/models/tokenizer.dart';
 
 sealed class SyntaxExpression extends SyntaxElement {
   const SyntaxExpression();
 
-  factory SyntaxExpression.fromString(String string) {
-    final number = int.tryParse(string);
+  factory SyntaxExpression.fromToken(Token token) {
+    final number = int.tryParse(token.value);
+
     if (number != null) return NumberLiteral(number);
-    if (string == 'true') return BoolLiteral(true);
-    if (string == 'false') return BoolLiteral(false);
-    return StringLiteral(string);
+    if (token.value == 'true') return BoolLiteral(true);
+    if (token.value == 'false') return BoolLiteral(false);
+    if (token.value == 'null') return NullLiteral(null);
+
+    return StringLiteral(token.value);
   }
 
   dynamic evaluate();
 }
 
-sealed class FunctionExpression extends SyntaxExpression {}
+final class FunctionExpression extends SyntaxExpression {
+  final String identifier;
+  final List<SyntaxExpression> parameter;
+
+  const FunctionExpression({required this.identifier, required this.parameter});
+
+  @override
+  dynamic evaluate() {
+    return FunctionRegistry.resolve(identifier, parameter.map((e) => e.evaluate()).toList());
+  }
+
+  void addParam(SyntaxExpression param) {
+    parameter.add(param);
+  }
+
+  @override
+  String toString() => 'Function $identifier($parameter)';
+}
 
 final class UnaryExpression extends SyntaxExpression {
   final UnaryOperator operator;
@@ -32,7 +54,7 @@ final class UnaryExpression extends SyntaxExpression {
   }
 
   @override
-  String toString() => '$runtimeType($operator, $operand)';
+  String toString() => '$runtimeType(operator: ${operator.symbol}, operand: $operand)';
 }
 
 final class BinaryExpression extends SyntaxExpression {
@@ -64,7 +86,7 @@ final class BinaryExpression extends SyntaxExpression {
   }
 
   @override
-  String toString() => '$runtimeType($operator, $leftOperand, $rightOperand)';
+  String toString() => '$runtimeType(left: $leftOperand, operator: ${operator.symbol}, right: $rightOperand)';
 }
 
 final class TernaryExpression extends SyntaxExpression {
@@ -82,7 +104,7 @@ final class TernaryExpression extends SyntaxExpression {
   }
 
   @override
-  String toString() => '$runtimeType($condition, $leftOperand, $rightOperand)';
+  String toString() => '$runtimeType(condition: $condition ? left: $leftOperand : right: $rightOperand)';
 }
 
 sealed class SyntaxLiteral<T> extends SyntaxExpression {
@@ -107,4 +129,8 @@ final class NumberLiteral extends SyntaxLiteral<num> {
 
 final class StringLiteral extends SyntaxLiteral<String> {
   const StringLiteral(super.value);
+}
+
+final class NullLiteral extends SyntaxLiteral<Null> {
+  const NullLiteral(super.value);
 }
