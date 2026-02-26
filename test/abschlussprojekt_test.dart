@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:abschlussprojekt/src/models/syntax_parser/_function_registry/_function_registry.dart';
-import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/syntax_element.dart';
 import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/_expression/syntax_expression.dart';
 import 'package:abschlussprojekt/src/models/syntax_parser/syntax_parser.dart';
 import 'package:abschlussprojekt/src/models/tokenizer.dart';
@@ -36,7 +35,6 @@ void main() {
     const tokenizer = Tokenizer();
     final tokens = tokenizer.tokenize(rule);
     final parser = SyntaxParser(tokens);
-    final elements = tokens.map((e) => SyntaxElement.fromToken(e)).toList();
     final expression = parser.parseSyntaxTree();
 
     test('Syntax evaluating', () {
@@ -57,7 +55,42 @@ void main() {
     final expression = parser.parseSyntaxTree();
     test('Test if tokenizing works properly.', () {
       print(expression);
-      print(expression.evaluate());
+      expect(expression.evaluate(), 10);
+      expect(expression.evaluate() > 10, false);
+    });
+
+    test('Test string and null extraction', () {
+      const rule2 = '"null" != null';
+      const tokenizer = Tokenizer();
+      final tokens2 = tokenizer.tokenize(rule2);
+      final parser = SyntaxParser(tokens2);
+      final expression = parser.parseSyntaxTree();
+
+      print(expression);
+      expect(expression.evaluate() is bool, true);
+      expect(expression.evaluate(), true);
+    });
+
+    test('Bool extraction.', () {
+      const rule3 = 'true && (true || false) == false';
+      const tokenizer = Tokenizer();
+      final tokens3 = tokenizer.tokenize(rule3);
+      final parser = SyntaxParser(tokens3);
+      final expression = parser.parseSyntaxTree();
+
+      print(expression);
+      expect(expression.evaluate(), false);
+    });
+
+    test('Ternary expression.', () {
+      const rule4 = '7 * 3 > 21 ? "greater than 21" : "less or equal 21."';
+      const tokenizer = Tokenizer();
+      final tokens4 = tokenizer.tokenize(rule4);
+      final parser = SyntaxParser(tokens4);
+      final expression = parser.parseSyntaxTree();
+
+      print(expression);
+      expect(expression.evaluate(), 'less or equal 21.');
     });
   });
 }

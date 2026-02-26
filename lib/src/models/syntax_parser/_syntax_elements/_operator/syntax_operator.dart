@@ -1,8 +1,6 @@
-import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/syntax_element.dart';
-
 enum Associativity { left, right }
 
-sealed class SyntaxOperator extends SyntaxElement {
+sealed class SyntaxOperator {
   final String symbol;
   final int precedence;
   final Associativity associativity;
@@ -25,6 +23,8 @@ sealed class SyntaxOperator extends SyntaxElement {
       '!=' => const NotEqualOperator(),
       '&&' => const AndOperator(),
       '||' => const OrOperator(),
+      '?' => const ConditionOperator(),
+      ':' => const OptionOperator(),
       (_) => throw Exception('Operator not defined.'),
     };
   }
@@ -39,6 +39,10 @@ sealed class UnaryOperator extends SyntaxOperator {
 
 sealed class BinaryOperator extends SyntaxOperator {
   const BinaryOperator({required super.symbol, required super.precedence, required super.associativity});
+}
+
+sealed class TernaryOperator extends SyntaxOperator {
+  const TernaryOperator({required super.symbol, required super.precedence, required super.associativity});
 }
 
 final class NotOperator extends UnaryOperator {
@@ -95,4 +99,12 @@ final class AndOperator extends BinaryOperator {
 
 final class OrOperator extends BinaryOperator {
   const OrOperator() : super(symbol: '||', precedence: 1, associativity: Associativity.left);
+}
+
+final class ConditionOperator extends TernaryOperator {
+  const ConditionOperator() : super(symbol: '?', precedence: 0, associativity: Associativity.left);
+}
+
+final class OptionOperator extends TernaryOperator {
+  const OptionOperator() : super(symbol: ':', precedence: 1, associativity: Associativity.left);
 }

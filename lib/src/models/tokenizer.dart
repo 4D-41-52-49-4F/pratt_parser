@@ -13,28 +13,50 @@ class Tokenizer {
         continue;
       }
 
+      if (_isStringDelimiter(c)) {
+        final delimiter = c;
+        final buffer = StringBuffer();
+        i++;
+        while (i < input.length && input[i] != delimiter) {
+          buffer.write(input[i]);
+          i++;
+        }
+        tokens.add(Token(TokenType.stringLiteral, buffer.toString()));
+        i++;
+        continue;
+      }
+
       if (_isNumber(c)) {
         final buffer = StringBuffer();
         while (i < input.length && _isNumber(input[i])) {
           buffer.write(input[i]);
           i++;
         }
-        tokens.add(Token(TokenType.number, buffer.toString()));
+        tokens.add(Token(TokenType.numeralLiteral, buffer.toString()));
         continue;
       }
 
-      // Identifiers
       if (_isLetter(c)) {
         final buffer = StringBuffer();
         while (i < input.length && (_isLetter(input[i]) || _isNumber(input[i]))) {
           buffer.write(input[i]);
           i++;
         }
+        final string = buffer.toString();
+        if (_isBooleanLiteral(string)) {
+          tokens.add(Token(TokenType.booleanLiteral, string));
+          continue;
+        }
+
+        if (_isNull(string)) {
+          tokens.add(Token(TokenType.nullLiteral, string));
+          continue;
+        }
+
         tokens.add(Token(TokenType.functionIdentifier, buffer.toString()));
         continue;
       }
 
-      // Multi-char operators
       if (i + 1 < input.length) {
         final twoChar = input.substring(i, i + 2);
         if (_isOperator(twoChar)) {
@@ -44,7 +66,6 @@ class Tokenizer {
         }
       }
 
-      // Single-char operator
       if (_isOperator(c)) {
         tokens.add(Token(TokenType.operator, c));
         i++;
@@ -70,7 +91,7 @@ class Tokenizer {
       }
 
       if (c == '.') {
-        tokens.add(Token(TokenType.objectRelation, c));
+        tokens.add(Token(TokenType.objectSeperator, c));
         i++;
         continue;
       }
@@ -83,22 +104,15 @@ class Tokenizer {
 
   bool _isNumber(String c) => RegExp(r'\d').hasMatch(c);
   bool _isLetter(String c) => RegExp(r'[A-Za-z_]').hasMatch(c);
-  bool _isOperator(String s) => ['==', '!=', '<=', '>=', '&&', '||'].contains(s) || '+-*/%><=!'.contains(s);
+  bool _isStringDelimiter(String c) => '\'"'.contains(c);
+  bool _isNull(String s) => s.toLowerCase() == 'null';
+  bool _isBooleanLiteral(String s) => s.toLowerCase() == 'true' || s.toLowerCase() == 'false';
+  bool _isOperator(String s) => ['==', '!=', '<=', '>=', '&&', '||'].contains(s) || '+-*/%><=!?:'.contains(s);
 }
 
 class Token {
   final TokenType type;
   final String value;
-
-  bool get isPartOfTreeStructure => switch (type) {
-    TokenType.string => true,
-    TokenType.number => true,
-    TokenType.operator => true,
-    TokenType.functionIdentifier => true,
-    TokenType.functionParameter => true,
-    TokenType.objectRelation => true,
-    (_) => false,
-  };
 
   Token(this.type, this.value);
   @override
@@ -106,11 +120,15 @@ class Token {
 }
 
 enum TokenType {
-  string,
-  number,
+  booleanLiteral,
+  numeralLiteral,
+  stringLiteral,
+  nullLiteral,
   closingParenthesis,
   openingParenthesis,
   operator,
+  ternaryConditionOperator,
+  ternaryOptionOperator,
   functionIdentifier,
   functionParameter,
   functionParameterSeperator,

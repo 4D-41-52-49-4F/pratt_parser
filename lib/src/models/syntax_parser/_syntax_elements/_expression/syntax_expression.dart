@@ -1,20 +1,18 @@
 import 'package:abschlussprojekt/src/models/syntax_parser/_function_registry/_function_registry.dart';
-import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/syntax_element.dart';
 import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/_operator/syntax_operator.dart';
 import 'package:abschlussprojekt/src/models/tokenizer.dart';
 
-sealed class SyntaxExpression extends SyntaxElement {
+sealed class SyntaxExpression {
   const SyntaxExpression();
 
-  factory SyntaxExpression.fromToken(Token token) {
-    final number = int.tryParse(token.value);
-
-    if (number != null) return NumberLiteral(number);
-    if (token.value == 'true') return BoolLiteral(true);
-    if (token.value == 'false') return BoolLiteral(false);
-    if (token.value == 'null') return NullLiteral(null);
-
-    return StringLiteral(token.value);
+  factory SyntaxExpression.literalFromToken(Token token) {
+    return switch (token.type) {
+      TokenType.stringLiteral => StringLiteral(token.value),
+      TokenType.numeralLiteral => NumeralLiteral(int.parse(token.value)),
+      TokenType.booleanLiteral => BooleanLiteral(bool.parse(token.value, caseSensitive: false)),
+      TokenType.nullLiteral => NullLiteral(null),
+      (_) => throw Exception('Unsupported literal type.'),
+    };
   }
 
   dynamic evaluate();
@@ -68,6 +66,7 @@ final class BinaryExpression extends SyntaxExpression {
   evaluate() {
     final evaluatedLeftOperand = leftOperand.evaluate();
     final evaluatedRightOperand = rightOperand.evaluate();
+
     return switch (operator) {
       MultiplicationOperator() => evaluatedLeftOperand * evaluatedRightOperand,
       DivisionOperator() => evaluatedLeftOperand / evaluatedRightOperand,
@@ -119,12 +118,12 @@ sealed class SyntaxLiteral<T> extends SyntaxExpression {
   String toString() => '$runtimeType($value)';
 }
 
-final class BoolLiteral extends SyntaxLiteral<bool> {
-  const BoolLiteral(super.value);
+final class BooleanLiteral extends SyntaxLiteral<bool> {
+  const BooleanLiteral(super.value);
 }
 
-final class NumberLiteral extends SyntaxLiteral<num> {
-  const NumberLiteral(super.value);
+final class NumeralLiteral extends SyntaxLiteral<num> {
+  const NumeralLiteral(super.value);
 }
 
 final class StringLiteral extends SyntaxLiteral<String> {

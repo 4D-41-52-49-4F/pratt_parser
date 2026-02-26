@@ -6,20 +6,12 @@ class SyntaxParser {
   final List<Token> tokens;
   int pos = 0;
 
-  SyntaxParser(List<Token> tokens) : tokens = [...tokens, Token(TokenType.string, '__EOF__')];
-
-  // ============================================================
-  // ENTRY
-  // ============================================================
+  SyntaxParser(List<Token> tokens) : tokens = [...tokens, Token(TokenType.stringLiteral, '__EOF__')];
 
   SyntaxExpression parseSyntaxTree() {
     final expression = _parseExpression();
     return expression;
   }
-
-  // ============================================================
-  // EXPRESSION (Precedence Climbing)
-  // ============================================================
 
   SyntaxExpression _parseExpression([int minPrecedence = 0]) {
     var left = _parsePrimary();
@@ -31,34 +23,40 @@ class SyntaxParser {
 
       final operator = SyntaxOperator.fromSymbol(token.value);
 
-      if (operator is! BinaryOperator) break;
+      if (operator is! BinaryOperator || operator is! TernaryOperator) break;
       if (operator.precedence < minPrecedence) break;
-
-      _advance(); // consume operator
 
       final nextMinPrecedence = operator.associativity == Associativity.left
           ? operator.precedence + 1
           : operator.precedence;
 
-      final right = _parseExpression(nextMinPrecedence);
+      _advance();
 
-      left = BinaryExpression(operator: operator, leftOperand: left, rightOperand: right);
+      if (operator is TernaryOperator) {
+        late final SyntaxExpression trueCase;
+        late final SyntaxExpression falseCase;
+        if (operator is ConditionOperator) trueCase = _parseExpression(nextMinPrecedence);
+        if (operator is OptionOperator) falseCase = _parseExpression(nextMinPrecedence);
+        left = TernaryExpression(condition: left, leftOperand: trueCase, rightOperand: falseCase);
+      } else {
+        final right = _parseExpression(nextMinPrecedence);
+
+        left = BinaryExpression(operator: operator, leftOperand: left, rightOperand: right);
+      }
     }
 
     return left;
   }
 
-  // ============================================================
-  // PRIMARY
-  // ============================================================
-
   SyntaxExpression _parsePrimary() {
     final token = _advance();
 
     switch (token.type) {
-      case TokenType.number:
-      case TokenType.string:
-        return SyntaxExpression.fromToken(token);
+      case TokenType.nullLiteral:
+      case TokenType.booleanLiteral:
+      case TokenType.numeralLiteral:
+      case TokenType.stringLiteral:
+        return SyntaxExpression.literalFromToken(token);
 
       case TokenType.functionIdentifier:
         return _parseFunction(token);
@@ -82,10 +80,6 @@ class SyntaxParser {
         throw Exception("Unexpected token: $token");
     }
   }
-
-  // ============================================================
-  // FUNCTION
-  // ============================================================
 
   FunctionExpression _parseFunction(Token identifierToken) {
     _consume(TokenType.openingParenthesis);
