@@ -23,26 +23,18 @@ class SyntaxParser {
 
       final operator = SyntaxOperator.fromSymbol(token.value);
 
-      if (operator is! BinaryOperator || operator is! TernaryOperator) break;
+      if (operator is! BinaryOperator) break;
       if (operator.precedence < minPrecedence) break;
+
+      _advance();
 
       final nextMinPrecedence = operator.associativity == Associativity.left
           ? operator.precedence + 1
           : operator.precedence;
 
-      _advance();
+      final right = _parseExpression(nextMinPrecedence);
 
-      if (operator is TernaryOperator) {
-        late final SyntaxExpression trueCase;
-        late final SyntaxExpression falseCase;
-        if (operator is ConditionOperator) trueCase = _parseExpression(nextMinPrecedence);
-        if (operator is OptionOperator) falseCase = _parseExpression(nextMinPrecedence);
-        left = TernaryExpression(condition: left, leftOperand: trueCase, rightOperand: falseCase);
-      } else {
-        final right = _parseExpression(nextMinPrecedence);
-
-        left = BinaryExpression(operator: operator, leftOperand: left, rightOperand: right);
-      }
+      left = BinaryExpression(operator: operator, leftOperand: left, rightOperand: right);
     }
 
     return left;
@@ -95,6 +87,17 @@ class SyntaxParser {
     _consume(TokenType.closingParenthesis);
 
     return FunctionExpression(identifier: identifierToken.value, parameter: params);
+  }
+
+  TernaryExpression _parseTernary(SyntaxExpression condition) {
+    late final SyntaxExpression leftOperand;
+    late final SyntaxExpression rightOperand;
+
+    leftOperand = _parseExpression();
+
+    rightOperand = _parseExpression();
+
+    return TernaryExpression(condition: condition, leftOperand: leftOperand, rightOperand: rightOperand);
   }
 
   bool _check(TokenType type) {

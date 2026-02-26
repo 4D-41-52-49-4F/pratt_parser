@@ -86,6 +86,7 @@ void main() {
       const rule4 = '7 * 3 > 21 ? "greater than 21" : "less or equal 21."';
       const tokenizer = Tokenizer();
       final tokens4 = tokenizer.tokenize(rule4);
+      print(tokens4);
       final parser = SyntaxParser(tokens4);
       final expression = parser.parseSyntaxTree();
 

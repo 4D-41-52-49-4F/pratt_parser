@@ -127,8 +127,6 @@ enum TokenType {
   closingParenthesis,
   openingParenthesis,
   operator,
-  ternaryConditionOperator,
-  ternaryOptionOperator,
   functionIdentifier,
   functionParameter,
   functionParameterSeperator,
