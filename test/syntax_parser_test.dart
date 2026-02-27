@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:abschlussprojekt/src/models/syntax_parser/_function_registry/_function_registry.dart';
-import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/_expression/syntax_expression.dart';
+import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/expression/syntax_expression.dart';
 import 'package:abschlussprojekt/src/models/syntax_parser/syntax_parser.dart';
 import 'package:abschlussprojekt/src/models/tokenizer.dart';
 import 'package:test/test.dart';

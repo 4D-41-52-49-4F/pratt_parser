@@ -1,5 +1,5 @@
-import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/_expression/syntax_expression.dart';
-import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/_operator/syntax_operator.dart';
+import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/expression/syntax_expression.dart';
+import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';
 import 'package:abschlussprojekt/src/models/tokenizer.dart';
 
 class SyntaxParser {
