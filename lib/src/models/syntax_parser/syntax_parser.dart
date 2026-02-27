@@ -23,18 +23,33 @@ class SyntaxParser {
 
       final operator = SyntaxOperator.fromSymbol(token.value);
 
-      if (operator is! BinaryOperator) break;
       if (operator.precedence < minPrecedence) break;
 
-      _advance();
+      if (operator is ConditionOperator) {
+        _consume(TokenType.operator);
+        final leftOperand = _parseExpression();
 
-      final nextMinPrecedence = operator.associativity == Associativity.left
-          ? operator.precedence + 1
-          : operator.precedence;
+        _consume(TokenType.operator);
+        final rightOperand = _parseExpression(operator.precedence);
 
-      final right = _parseExpression(nextMinPrecedence);
+        left = TernaryExpression(condition: left, leftOperand: leftOperand, rightOperand: rightOperand);
+        continue;
+      }
 
-      left = BinaryExpression(operator: operator, leftOperand: left, rightOperand: right);
+      if (operator is BinaryOperator) {
+        _advance();
+
+        final nextMinPrecedence = operator.associativity == Associativity.left
+            ? operator.precedence + 1
+            : operator.precedence;
+
+        final right = _parseExpression(nextMinPrecedence);
+
+        left = BinaryExpression(operator: operator, leftOperand: left, rightOperand: right);
+        continue;
+      }
+
+      break;
     }
 
     return left;
@@ -54,14 +69,10 @@ class SyntaxParser {
         return _parseFunction(token);
 
       case TokenType.operator:
-        final operator = SyntaxOperator.fromSymbol(token.value);
+        final operator = UnaryOperator.fromSymbol(token.value);
 
-        if (operator is UnaryOperator) {
-          final operand = _parseExpression(operator.precedence);
-          return UnaryExpression(operator: operator, operand: operand);
-        }
-
-        throw Exception("Unexpected binary operator: ${token.value}");
+        final operand = _parseExpression(operator.precedence);
+        return UnaryExpression(operator: operator, operand: operand);
 
       case TokenType.openingParenthesis:
         final expr = _parseExpression();
@@ -87,17 +98,6 @@ class SyntaxParser {
     _consume(TokenType.closingParenthesis);
 
     return FunctionExpression(identifier: identifierToken.value, parameter: params);
-  }
-
-  TernaryExpression _parseTernary(SyntaxExpression condition) {
-    late final SyntaxExpression leftOperand;
-    late final SyntaxExpression rightOperand;
-
-    leftOperand = _parseExpression();
-
-    rightOperand = _parseExpression();
-
-    return TernaryExpression(condition: condition, leftOperand: leftOperand, rightOperand: rightOperand);
   }
 
   bool _check(TokenType type) {

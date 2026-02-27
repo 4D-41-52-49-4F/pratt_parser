@@ -44,10 +44,19 @@ final class UnaryExpression extends SyntaxExpression {
   const UnaryExpression({required this.operator, required this.operand});
 
   @override
-  bool evaluate() {
+  dynamic evaluate() {
     final evaluatedOperand = operand.evaluate();
+
+    final exception = _ExpressionExceptionHandler.getExceptionOfUnaryExpression(
+      operator: operator,
+      operand: evaluatedOperand,
+    );
+
+    if (exception != null) throw exception;
+
     return switch (operator) {
       NotOperator() => !evaluatedOperand,
+      UnaryMinusOperator() => -evaluatedOperand,
     };
   }
 
@@ -66,6 +75,14 @@ final class BinaryExpression extends SyntaxExpression {
   evaluate() {
     final evaluatedLeftOperand = leftOperand.evaluate();
     final evaluatedRightOperand = rightOperand.evaluate();
+
+    final exception = _ExpressionExceptionHandler.getExceptionOfBinaryExpression(
+      operator: operator,
+      leftOperand: evaluatedLeftOperand,
+      rightOperand: evaluatedRightOperand,
+    );
+
+    if (exception != null) throw exception;
 
     return switch (operator) {
       MultiplicationOperator() => evaluatedLeftOperand * evaluatedRightOperand,
@@ -98,7 +115,11 @@ final class TernaryExpression extends SyntaxExpression {
   @override
   dynamic evaluate() {
     final evaluatedCondition = condition.evaluate();
-    if (evaluatedCondition is! bool) throw Exception('Condition must evaluate to a bool!');
+
+    final exception = _ExpressionExceptionHandler.getExceptionOfTernaryExpression(condition: evaluatedCondition);
+
+    if (exception != null) throw exception;
+
     return evaluatedCondition ? leftOperand.evaluate() : rightOperand.evaluate();
   }
 
@@ -132,4 +153,101 @@ final class StringLiteral extends SyntaxLiteral<String> {
 
 final class NullLiteral extends SyntaxLiteral<Null> {
   const NullLiteral(super.value);
+}
+
+class _ExpressionExceptionHandler {
+  static Exception? getExceptionOfUnaryExpression({required UnaryOperator operator, required dynamic operand}) {
+    if (operator is NotOperator) {
+      if (operand is! bool) {
+        return _UnaryException('Not operator negates a boolean value. Got: ${operand.runtimeType}');
+      }
+    }
+    if (operator is UnaryMinusOperator) {
+      if (operand is! num) {
+        return _UnaryException('Unary minus operator negates a num value. Got: ${operand.runtimeType}');
+      }
+    }
+    return null;
+  }
+
+  static Exception? getExceptionOfBinaryExpression({
+    required BinaryOperator operator,
+    required dynamic leftOperand,
+    required dynamic rightOperand,
+  }) {
+    if (operator is ArithmeticOperator) {
+      if (leftOperand is! num || rightOperand is! num) {
+        return _ArithmeticException(
+          'Wrong type(s) for arithmetic operation: left operand: ${leftOperand.runtimeType} ${operator.symbol} right operand: ${rightOperand.runtimeType} ',
+        );
+      }
+      if ((operator is DivisionOperator || operator is ModuloOperator) && rightOperand == 0) {
+        return _ArithmeticException('Right operand is 0 in a division context.');
+      }
+    }
+
+    if (operator is RelationalOperator) {
+      if (leftOperand is! num || rightOperand is! num) {
+        return _RelationalException(
+          'Relational operators need both values to be compareable (usually a type of num): left operand: ${leftOperand.runtimeType}, right operand: ${rightOperand.runtimeType} ',
+        );
+      }
+    }
+    if (operator is LogicalOperator) {
+      if (leftOperand is! bool || rightOperand is! bool) {
+        return _LogicalException(
+          'Logical operators need both operands to be boolean. left operand: ${leftOperand.runtimeType} ${operator.symbol}, right operand: ${rightOperand.runtimeType} ',
+        );
+      }
+    }
+
+    return null;
+  }
+
+  static Exception? getExceptionOfTernaryExpression({dynamic condition}) {
+    if (condition is! bool) {
+      return _TernaryException('Condition must evaluate to bool. Got: ${condition.runtimeType}');
+    }
+    return null;
+  }
+}
+
+final class _UnaryException implements Exception {
+  final String message;
+  const _UnaryException(this.message);
+
+  @override
+  String toString() => 'UnrayException: $message';
+}
+
+final class _ArithmeticException implements Exception {
+  final String message;
+  const _ArithmeticException(this.message);
+
+  @override
+  String toString() => 'ArithmeticException: $message';
+}
+
+final class _RelationalException implements Exception {
+  final String message;
+  const _RelationalException(this.message);
+
+  @override
+  String toString() => 'RelationalException: $message';
+}
+
+final class _LogicalException implements Exception {
+  final String message;
+  const _LogicalException(this.message);
+
+  @override
+  String toString() => 'LogicalException: $message';
+}
+
+final class _TernaryException implements Exception {
+  final String message;
+  const _TernaryException(this.message);
+
+  @override
+  String toString() => 'TernaryException: $message';
 }
