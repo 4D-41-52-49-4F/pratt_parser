@@ -140,12 +140,33 @@ final class VariableExpression extends SyntaxExpression {
 
   @override
   dynamic evaluate() {
+    final exception = _ExpressionExceptionHandler.getExceptionOfVariableExpression(identifier: identifier);
+    if (exception != null) throw exception;
+
     final value = VariableEnvironment.getValue(identifier);
     return value is SyntaxExpression ? value.evaluate() : value;
   }
 
   @override
   String toString() => '$runtimeType($identifier)';
+}
+
+final class MemberExpression extends SyntaxExpression {
+  final SyntaxExpression obj;
+  final SyntaxExpression property;
+
+  const MemberExpression({required this.obj, required this.property});
+
+  @override
+  dynamic evaluate() {
+    final left = obj.evaluate();
+    final evaluatedProperty = property.evaluate();
+
+    return left['$evaluatedProperty'];
+  }
+
+  @override
+  String toString() => '$runtimeType($obj.$property)';
 }
 
 sealed class SyntaxLiteral<T> extends SyntaxExpression {
@@ -233,10 +254,16 @@ class _ExpressionExceptionHandler {
     return null;
   }
 
-  static Exception? getExceptionOfTernaryExpression({dynamic condition}) {
+  static Exception? getExceptionOfTernaryExpression({required dynamic condition}) {
     if (condition is! bool) {
       return _TernaryException('Condition must evaluate to bool. Got: ${condition.runtimeType}');
     }
+    return null;
+  }
+
+  static Exception? getExceptionOfVariableExpression({required String identifier}) {
+    final value = VariableEnvironment.getValue(identifier);
+    if (value == null) return _VariableException('Variable not Initialized.');
     return null;
   }
 }
@@ -246,7 +273,7 @@ final class _UnaryException implements Exception {
   const _UnaryException(this.message);
 
   @override
-  String toString() => 'UnrayException: $message';
+  String toString() => '$runtimeType: $message';
 }
 
 final class _ArithmeticException implements Exception {
@@ -254,7 +281,7 @@ final class _ArithmeticException implements Exception {
   const _ArithmeticException(this.message);
 
   @override
-  String toString() => 'ArithmeticException: $message';
+  String toString() => '$runtimeType: $message';
 }
 
 final class _RelationalException implements Exception {
@@ -262,7 +289,7 @@ final class _RelationalException implements Exception {
   const _RelationalException(this.message);
 
   @override
-  String toString() => 'RelationalException: $message';
+  String toString() => '$runtimeType: $message';
 }
 
 final class _LogicalException implements Exception {
@@ -270,7 +297,7 @@ final class _LogicalException implements Exception {
   const _LogicalException(this.message);
 
   @override
-  String toString() => 'LogicalException: $message';
+  String toString() => '$runtimeType: $message';
 }
 
 final class _TernaryException implements Exception {
@@ -278,5 +305,21 @@ final class _TernaryException implements Exception {
   const _TernaryException(this.message);
 
   @override
-  String toString() => 'TernaryException: $message';
+  String toString() => '$runtimeType: $message';
+}
+
+final class _VariableException implements Exception {
+  final String message;
+  const _VariableException(this.message);
+
+  @override
+  String toString() => '$runtimeType: $message';
+}
+
+final class _MemberException implements Exception {
+  final String message;
+  const _MemberException(this.message);
+
+  @override
+  String toString() => '$runtimeType: $message';
 }

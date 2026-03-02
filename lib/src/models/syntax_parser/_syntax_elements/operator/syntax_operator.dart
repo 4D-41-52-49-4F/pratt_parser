@@ -8,6 +8,7 @@ sealed class SyntaxOperator {
   const SyntaxOperator({required this.symbol, required this.precedence, required this.associativity});
 
   factory SyntaxOperator.fromSymbol(String symbol) => switch (symbol) {
+    '.' => const DotOperator(),
     '*' => const MultiplicationOperator(),
     '/' => const DivisionOperator(),
     '%' => const ModuloOperator(),
@@ -63,6 +64,10 @@ sealed class EqualityOperator extends BinaryOperator {
 
 sealed class LogicalOperator extends BinaryOperator {
   const LogicalOperator({required super.symbol, required super.precedence, required super.associativity});
+}
+
+final class DotOperator extends SyntaxOperator {
+  const DotOperator() : super(symbol: '.', precedence: 9, associativity: Associativity.right);
 }
 
 final class NotOperator extends UnaryOperator {

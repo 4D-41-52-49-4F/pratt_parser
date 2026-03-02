@@ -25,6 +25,11 @@ class SyntaxParser {
 
       if (operator.precedence < minPrecedence) break;
 
+      if (operator is DotOperator) {
+        left = _parseMemberExpression(left);
+        continue;
+      }
+
       if (operator is ConditionOperator) {
         _consume(TokenType.operator);
         final leftOperand = _parseExpression();
@@ -79,8 +84,6 @@ class SyntaxParser {
                   (_) => _parseVariableExpression(token),
                 };
               }
-            case TokenType.identifier:
-              return _parseExpression();
             default:
               return _parseVariableExpression(token);
           }
@@ -124,6 +127,18 @@ class SyntaxParser {
     final expression = _parseExpression();
 
     return AssignmentExpression(identifier: identifier, expression: expression);
+  }
+
+  MemberExpression _parseMemberExpression(SyntaxExpression left) {
+    _advance();
+    if (!_check(TokenType.identifier)) {
+      throw Exception("Dot operator expects a name on the right. Got: ${_peek().type}");
+    }
+
+    final token = _advance();
+    final property = StringLiteral(token.value);
+
+    return MemberExpression(obj: left, property: property);
   }
 
   VariableExpression _parseVariableExpression(Token token) => VariableExpression(identifier: token.value);

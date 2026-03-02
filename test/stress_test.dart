@@ -163,8 +163,9 @@ void main() {
 
       final tokens = const Tokenizer().tokenize(rule);
       final parser = SyntaxParser(tokens);
+      final expression = parser.parseSyntaxTree();
 
-      expect(() => parser.parseSyntaxTree(), throwsException);
+      expect(() => expression.evaluate(), throwsException);
     });
   });
 

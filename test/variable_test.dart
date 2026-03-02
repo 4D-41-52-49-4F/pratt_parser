@@ -62,6 +62,17 @@ void main() {
       expect(VariableEnvironment.getValue('result'), 30);
     });
 
+    test('Precedence climbing test.', () {
+      const rule = 'result = 10 + 5 * 2';
+      final tokens = const Tokenizer().tokenize(rule);
+      final parser = SyntaxParser(tokens);
+      final expression = parser.parseSyntaxTree();
+
+      expression.evaluate();
+
+      expect(VariableEnvironment.getValue('result'), 20);
+    });
+
     test('Ternary assignment.', () {
       const rule = 'a = 7 > 5 ? "7 bigger 5" : "7 less/equal 5"';
       final tokens = const Tokenizer().tokenize(rule);
