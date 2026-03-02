@@ -189,7 +189,7 @@ sealed class SyntaxLiteral<T> extends SyntaxExpression {
 
   static SyntaxLiteral<dynamic> literalFromToken(Token token) => switch (token.type) {
     TokenType.stringLiteral => StringLiteral(token.value),
-    TokenType.numeralLiteral => NumeralLiteral(int.parse(token.value)),
+    TokenType.numeralLiteral => NumeralLiteral(num.parse(token.value)),
     TokenType.booleanLiteral => BooleanLiteral(bool.parse(token.value, caseSensitive: false)),
     TokenType.nullLiteral => NullLiteral(null),
     (_) => throw Exception('Unsupported literal type.'),

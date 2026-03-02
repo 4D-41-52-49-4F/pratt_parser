@@ -28,17 +28,20 @@ class Tokenizer {
 
       if (_isNumber(c)) {
         final buffer = StringBuffer();
-        while (i < input.length && _isNumber(input[i])) {
+        var dotted = false;
+        while (i < input.length && (_isNumber(input[i]) || !dotted && '.'.contains(input[i]))) {
+          if (input[i] == '.') dotted = true;
           buffer.write(input[i]);
           i++;
         }
+        print(buffer.toString());
         tokens.add(Token(TokenType.numeralLiteral, buffer.toString()));
         continue;
       }
 
       if (_isLetter(c)) {
         final buffer = StringBuffer();
-        while (i < input.length && (_isLetter(input[i]) || _isNumber(input[i]))) {
+        while (i < input.length && c.trim().isNotEmpty) {
           buffer.write(input[i]);
           i++;
         }
