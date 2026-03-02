@@ -17,6 +17,25 @@ void main() {
       expect(tokens.isNotEmpty, true);
       expect(expression.evaluate(), 13);
     });
+    test('Exponential calculation', () {
+      const rule = '2 ^ 5';
+      final tokens = const Tokenizer().tokenize(rule);
+      final parser = SyntaxParser(tokens);
+      final expression = parser.parseSyntaxTree();
+
+      expect(tokens.isNotEmpty, true);
+      expect(expression.evaluate(), 32);
+    });
+
+    test('Exponential associativity', () {
+      const rule = '2 ^ 3 ^ 2';
+      final tokens = const Tokenizer().tokenize(rule);
+      final parser = SyntaxParser(tokens);
+      final expression = parser.parseSyntaxTree();
+
+      expect(tokens.isNotEmpty, true);
+      expect(expression.evaluate(), 512);
+    });
 
     test('Parentheses override precedence', () {
       const rule = '(7 + 3) * 2';

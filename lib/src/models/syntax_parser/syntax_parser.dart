@@ -31,26 +31,12 @@ class SyntaxParser {
       }
 
       if (operator is ConditionOperator) {
-        _consume(TokenType.operator);
-        final leftOperand = _parseExpression();
-
-        _consume(TokenType.operator);
-        final rightOperand = _parseExpression(operator.precedence);
-
-        left = TernaryExpression(condition: left, leftOperand: leftOperand, rightOperand: rightOperand);
+        left = _parseTernaryExpression(left, operator);
         continue;
       }
 
       if (operator is BinaryOperator) {
-        _advance();
-
-        final nextMinPrecedence = operator.associativity == Associativity.left
-            ? operator.precedence + 1
-            : operator.precedence;
-
-        final right = _parseExpression(nextMinPrecedence);
-
-        left = BinaryExpression(operator: operator, leftOperand: left, rightOperand: right);
+        left = _parseBinaryExpression(left, operator);
         continue;
       }
 
@@ -75,7 +61,7 @@ class SyntaxParser {
           final activeToken = _peek();
           switch (activeToken.type) {
             case TokenType.openingParenthesis:
-              return _parseFunction(token);
+              return _parseFunctionExpression(token);
             case TokenType.operator:
               {
                 final operator = SyntaxOperator.fromSymbol(activeToken.value);
@@ -105,7 +91,29 @@ class SyntaxParser {
     }
   }
 
-  FunctionExpression _parseFunction(Token identifierToken) {
+  BinaryExpression _parseBinaryExpression(SyntaxExpression left, BinaryOperator operator) {
+    _advance();
+
+    final nextMinPrecedence = operator.associativity == Associativity.left
+        ? operator.precedence + 1
+        : operator.precedence;
+
+    final right = _parseExpression(nextMinPrecedence);
+
+    return BinaryExpression(operator: operator, leftOperand: left, rightOperand: right);
+  }
+
+  TernaryExpression _parseTernaryExpression(SyntaxExpression left, SyntaxOperator operator) {
+    _consume(TokenType.operator);
+    final leftOperand = _parseExpression();
+
+    _consume(TokenType.operator);
+    final rightOperand = _parseExpression(operator.precedence);
+
+    return TernaryExpression(condition: left, leftOperand: leftOperand, rightOperand: rightOperand);
+  }
+
+  FunctionExpression _parseFunctionExpression(Token identifierToken) {
     _consume(TokenType.openingParenthesis);
 
     final params = <SyntaxExpression>[];

@@ -72,6 +72,7 @@ final class BinaryExpression extends SyntaxExpression {
     if (exception != null) throw exception;
 
     return switch (operator) {
+      ExponentOperator() => _power(evaluatedLeftOperand, evaluatedRightOperand),
       MultiplicationOperator() => evaluatedLeftOperand * evaluatedRightOperand,
       DivisionOperator() => evaluatedLeftOperand / evaluatedRightOperand,
       ModuloOperator() => evaluatedLeftOperand % evaluatedRightOperand,
@@ -86,6 +87,18 @@ final class BinaryExpression extends SyntaxExpression {
       AndOperator() => evaluatedLeftOperand && evaluatedRightOperand,
       OrOperator() => evaluatedLeftOperand || evaluatedRightOperand,
     };
+  }
+
+  num _power(num base, int exponent) {
+    if (exponent == 0) return 1;
+
+    final half = _power(base, exponent ~/ 2);
+
+    if (exponent % 2 == 0) {
+      return half * half;
+    } else {
+      return base * half * half;
+    }
   }
 
   @override

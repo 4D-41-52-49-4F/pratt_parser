@@ -9,6 +9,7 @@ sealed class SyntaxOperator {
 
   factory SyntaxOperator.fromSymbol(String symbol) => switch (symbol) {
     '.' => const DotOperator(),
+    '^' => const ExponentOperator(),
     '*' => const MultiplicationOperator(),
     '/' => const DivisionOperator(),
     '%' => const ModuloOperator(),
@@ -76,6 +77,10 @@ final class NotOperator extends UnaryOperator {
 
 final class UnaryMinusOperator extends UnaryOperator {
   const UnaryMinusOperator() : super(symbol: '-', precedence: 8, associativity: Associativity.right);
+}
+
+final class ExponentOperator extends ArithmeticOperator {
+  const ExponentOperator() : super(symbol: '^', precedence: 7, associativity: Associativity.right);
 }
 
 final class MultiplicationOperator extends ArithmeticOperator {

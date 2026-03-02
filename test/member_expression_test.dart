@@ -16,26 +16,24 @@ void main() {
       });
     });
 
-    test('Deep access: user.profile.points', () async {
+    test('Deep access: user.profile.points', () {
       final rule = 'user.profile.points';
       final tokens = Tokenizer().tokenize(rule);
       final expression = SyntaxParser(tokens).parseSyntaxTree();
 
-      // Erwarteter AST: Member(obj: Member(obj: Var(user), prop: "profile"), prop: "points")
-      expect(await expression.evaluate(), 150);
+      expect(expression.evaluate(), 150);
     });
 
-    test('Comparison of two map values: user.profile.points > config.thresholds.min_points', () async {
+    test('Comparison of two map values: user.profile.points > config.thresholds.min_points', () {
       final rule = 'user.profile.points > config.thresholds.min_points';
       final tokens = Tokenizer().tokenize(rule);
       final expression = SyntaxParser(tokens).parseSyntaxTree();
 
-      // Dies kombiniert BinaryExpression mit zwei MemberExpressions
-      final result = await expression.evaluate();
-      expect(result, isTrue); // 150 > 100
+      final result = expression.evaluate();
+      expect(result, isTrue);
     });
 
-    test('Equality check between two distinct objects', () async {
+    test('Equality check between two distinct objects', () {
       VariableEnvironment.addOrUpdateVariable('otherUser', {
         'profile': {'points': 150},
       });
@@ -44,7 +42,7 @@ void main() {
       final tokens = Tokenizer().tokenize(rule);
       final expression = SyntaxParser(tokens).parseSyntaxTree();
 
-      expect(await expression.evaluate(), isTrue);
+      expect(expression.evaluate(), isTrue);
     });
   });
 }

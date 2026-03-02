@@ -101,7 +101,7 @@ class Tokenizer {
   bool _isStringDelimiter(String c) => '\'"'.contains(c);
   bool _isNull(String s) => s.toLowerCase() == 'null';
   bool _isBooleanLiteral(String s) => s.toLowerCase() == 'true' || s.toLowerCase() == 'false';
-  bool _isOperator(String s) => ['==', '!=', '<=', '>=', '&&', '||'].contains(s) || '+-*/%><=!?:.'.contains(s);
+  bool _isOperator(String s) => ['==', '!=', '<=', '>=', '&&', '||'].contains(s) || '+-*/%><=!?:.^'.contains(s);
 }
 
 class Token {
