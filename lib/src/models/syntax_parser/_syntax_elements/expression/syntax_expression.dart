@@ -1,19 +1,10 @@
 import 'package:abschlussprojekt/src/models/syntax_parser/_function_registry/_function_registry.dart';
+import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/environment/environment.dart';
 import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';
 import 'package:abschlussprojekt/src/models/tokenizer.dart';
 
 sealed class SyntaxExpression {
   const SyntaxExpression();
-
-  factory SyntaxExpression.literalFromToken(Token token) {
-    return switch (token.type) {
-      TokenType.stringLiteral => StringLiteral(token.value),
-      TokenType.numeralLiteral => NumeralLiteral(int.parse(token.value)),
-      TokenType.booleanLiteral => BooleanLiteral(bool.parse(token.value, caseSensitive: false)),
-      TokenType.nullLiteral => NullLiteral(null),
-      (_) => throw Exception('Unsupported literal type.'),
-    };
-  }
 
   dynamic evaluate();
 }
@@ -123,10 +114,52 @@ final class TernaryExpression extends SyntaxExpression {
   String toString() => '$runtimeType(condition: $condition ? left: $leftOperand : right: $rightOperand)';
 }
 
+final class AssignmentExpression extends SyntaxExpression {
+  final String identifier;
+  final SyntaxExpression expression;
+
+  const AssignmentExpression({required this.identifier, required this.expression});
+
+  @override
+  dynamic evaluate() {
+    final evaluatedExpression = expression.evaluate();
+
+    VariableEnvironment.addOrUpdateVariable(identifier, evaluatedExpression);
+
+    return evaluatedExpression;
+  }
+
+  @override
+  String toString() => '$runtimeType($identifier = $expression)';
+}
+
+final class VariableExpression extends SyntaxExpression {
+  final String identifier;
+
+  const VariableExpression({required this.identifier});
+
+  @override
+  dynamic evaluate() {
+    final value = VariableEnvironment.getValue(identifier);
+    return value is SyntaxExpression ? value.evaluate() : value;
+  }
+
+  @override
+  String toString() => '$runtimeType($identifier)';
+}
+
 sealed class SyntaxLiteral<T> extends SyntaxExpression {
   final T value;
 
   const SyntaxLiteral(this.value);
+
+  static SyntaxLiteral<dynamic> literalFromToken(Token token) => switch (token.type) {
+    TokenType.stringLiteral => StringLiteral(token.value),
+    TokenType.numeralLiteral => NumeralLiteral(int.parse(token.value)),
+    TokenType.booleanLiteral => BooleanLiteral(bool.parse(token.value, caseSensitive: false)),
+    TokenType.nullLiteral => NullLiteral(null),
+    (_) => throw Exception('Unsupported literal type.'),
+  };
 
   @override
   T evaluate() => value;

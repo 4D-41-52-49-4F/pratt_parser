@@ -53,7 +53,7 @@ class Tokenizer {
           continue;
         }
 
-        tokens.add(Token(TokenType.functionIdentifier, buffer.toString()));
+        tokens.add(Token(TokenType.identifier, buffer.toString()));
         continue;
       }
 
@@ -85,13 +85,13 @@ class Tokenizer {
       }
 
       if (c == ',') {
-        tokens.add(Token(TokenType.functionParameterSeperator, c));
+        tokens.add(Token(TokenType.comma, c));
         i++;
         continue;
       }
 
       if (c == '.') {
-        tokens.add(Token(TokenType.objectSeperator, c));
+        tokens.add(Token(TokenType.dot, c));
         i++;
         continue;
       }
@@ -127,9 +127,7 @@ enum TokenType {
   closingParenthesis,
   openingParenthesis,
   operator,
-  functionIdentifier,
-  functionParameter,
-  functionParameterSeperator,
-  objectRelation,
-  objectSeperator,
+  identifier,
+  comma,
+  dot,
 }

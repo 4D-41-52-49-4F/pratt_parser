@@ -23,7 +23,8 @@ sealed class SyntaxOperator {
     '||' => const OrOperator(),
     '?' => const ConditionOperator(),
     ':' => const ElseOperator(),
-    (_) => throw Exception('Operator not defined.'),
+    '=' => const AssignmentOperator(),
+    (_) => throw Exception('Operator not defined. $symbol'),
   };
 
   @override
@@ -65,69 +66,73 @@ sealed class LogicalOperator extends BinaryOperator {
 }
 
 final class NotOperator extends UnaryOperator {
-  const NotOperator() : super(symbol: '!', precedence: 7, associativity: Associativity.right);
+  const NotOperator() : super(symbol: '!', precedence: 8, associativity: Associativity.right);
 }
 
 final class UnaryMinusOperator extends UnaryOperator {
-  const UnaryMinusOperator() : super(symbol: '!', precedence: 7, associativity: Associativity.right);
+  const UnaryMinusOperator() : super(symbol: '-', precedence: 8, associativity: Associativity.right);
 }
 
 final class MultiplicationOperator extends ArithmeticOperator {
-  const MultiplicationOperator() : super(symbol: '*', precedence: 6, associativity: Associativity.left);
+  const MultiplicationOperator() : super(symbol: '*', precedence: 7, associativity: Associativity.left);
 }
 
 final class DivisionOperator extends ArithmeticOperator {
-  const DivisionOperator() : super(symbol: '/', precedence: 6, associativity: Associativity.left);
+  const DivisionOperator() : super(symbol: '/', precedence: 7, associativity: Associativity.left);
 }
 
 final class ModuloOperator extends ArithmeticOperator {
-  const ModuloOperator() : super(symbol: '%', precedence: 6, associativity: Associativity.left);
+  const ModuloOperator() : super(symbol: '%', precedence: 7, associativity: Associativity.left);
 }
 
 final class PlusOperator extends ArithmeticOperator {
-  const PlusOperator() : super(symbol: '+', precedence: 5, associativity: Associativity.left);
+  const PlusOperator() : super(symbol: '+', precedence: 6, associativity: Associativity.left);
 }
 
 final class MinusOperator extends ArithmeticOperator {
-  const MinusOperator() : super(symbol: '-', precedence: 5, associativity: Associativity.left);
+  const MinusOperator() : super(symbol: '-', precedence: 6, associativity: Associativity.left);
 }
 
 final class LessThanOperator extends RelationalOperator {
-  const LessThanOperator() : super(symbol: '<', precedence: 4, associativity: Associativity.left);
+  const LessThanOperator() : super(symbol: '<', precedence: 5, associativity: Associativity.left);
 }
 
 final class LessThanOrEqualOperator extends RelationalOperator {
-  const LessThanOrEqualOperator() : super(symbol: '<=', precedence: 4, associativity: Associativity.left);
+  const LessThanOrEqualOperator() : super(symbol: '<=', precedence: 5, associativity: Associativity.left);
 }
 
 final class GreaterThanOperator extends RelationalOperator {
-  const GreaterThanOperator() : super(symbol: '>', precedence: 4, associativity: Associativity.left);
+  const GreaterThanOperator() : super(symbol: '>', precedence: 5, associativity: Associativity.left);
 }
 
 final class GreaterThanOrEqualOperator extends RelationalOperator {
-  const GreaterThanOrEqualOperator() : super(symbol: '>=', precedence: 4, associativity: Associativity.left);
+  const GreaterThanOrEqualOperator() : super(symbol: '>=', precedence: 5, associativity: Associativity.left);
 }
 
 final class EqualOperator extends EqualityOperator {
-  const EqualOperator() : super(symbol: '==', precedence: 3, associativity: Associativity.left);
+  const EqualOperator() : super(symbol: '==', precedence: 4, associativity: Associativity.left);
 }
 
 final class NotEqualOperator extends EqualityOperator {
-  const NotEqualOperator() : super(symbol: '!=', precedence: 3, associativity: Associativity.left);
+  const NotEqualOperator() : super(symbol: '!=', precedence: 4, associativity: Associativity.left);
 }
 
 final class AndOperator extends LogicalOperator {
-  const AndOperator() : super(symbol: '&&', precedence: 2, associativity: Associativity.left);
+  const AndOperator() : super(symbol: '&&', precedence: 3, associativity: Associativity.left);
 }
 
 final class OrOperator extends LogicalOperator {
-  const OrOperator() : super(symbol: '||', precedence: 1, associativity: Associativity.left);
+  const OrOperator() : super(symbol: '||', precedence: 2, associativity: Associativity.left);
 }
 
 final class ConditionOperator extends TernaryOperator {
-  const ConditionOperator() : super(symbol: '?', precedence: 0, associativity: Associativity.right);
+  const ConditionOperator() : super(symbol: '?', precedence: 1, associativity: Associativity.right);
 }
 
 final class ElseOperator extends TernaryOperator {
   const ElseOperator() : super(symbol: ':', precedence: 1, associativity: Associativity.right);
+}
+
+final class AssignmentOperator extends SyntaxOperator {
+  const AssignmentOperator() : super(symbol: '=', precedence: 0, associativity: Associativity.right);
 }

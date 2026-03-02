@@ -63,10 +63,28 @@ class SyntaxParser {
       case TokenType.booleanLiteral:
       case TokenType.numeralLiteral:
       case TokenType.stringLiteral:
-        return SyntaxExpression.literalFromToken(token);
+        return SyntaxLiteral.literalFromToken(token);
 
-      case TokenType.functionIdentifier:
-        return _parseFunction(token);
+      case TokenType.identifier:
+        {
+          final activeToken = _peek();
+          switch (activeToken.type) {
+            case TokenType.openingParenthesis:
+              return _parseFunction(token);
+            case TokenType.operator:
+              {
+                final operator = SyntaxOperator.fromSymbol(activeToken.value);
+                return switch (operator) {
+                  AssignmentOperator() => _parseAssignmentExpression(token),
+                  (_) => _parseVariableExpression(token),
+                };
+              }
+            case TokenType.identifier:
+              return _parseExpression();
+            default:
+              return _parseVariableExpression(token);
+          }
+        }
 
       case TokenType.operator:
         final operator = UnaryOperator.fromSymbol(token.value);
@@ -92,13 +110,23 @@ class SyntaxParser {
     if (!_check(TokenType.closingParenthesis)) {
       do {
         params.add(_parseExpression());
-      } while (_match(TokenType.functionParameterSeperator));
+      } while (_match(TokenType.comma));
     }
 
     _consume(TokenType.closingParenthesis);
 
     return FunctionExpression(identifier: identifierToken.value, parameter: params);
   }
+
+  AssignmentExpression _parseAssignmentExpression(Token token) {
+    final identifier = token.value;
+    _consume(TokenType.operator);
+    final expression = _parseExpression();
+
+    return AssignmentExpression(identifier: identifier, expression: expression);
+  }
+
+  VariableExpression _parseVariableExpression(Token token) => VariableExpression(identifier: token.value);
 
   bool _check(TokenType type) {
     return _peek().type == type;
