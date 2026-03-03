@@ -26,20 +26,20 @@ sealed class SyntaxOperator {
     '?' => const ConditionOperator(),
     ':' => const ElseOperator(),
     '=' => const AssignmentOperator(),
-    (_) => throw Exception('Operator not defined. $symbol'),
+    (_) => throw Exception('Operator not defined: $symbol'),
   };
 
   @override
-  String toString() => '$runtimeType($symbol, $precedence, $associativity)';
+  String toString() => 'SyntaxOperator($symbol, $precedence, $associativity)';
 }
 
 sealed class UnaryOperator extends SyntaxOperator {
   const UnaryOperator({required super.symbol, required super.precedence, required super.associativity});
 
   factory UnaryOperator.fromSymbol(String symbol) => switch (symbol) {
-    '!' => NotOperator(),
-    '-' => UnaryMinusOperator(),
-    (_) => throw Exception("Unexpected binary operator: $symbol"),
+    '!' => const NotOperator(),
+    '-' => const UnaryMinusOperator(),
+    (_) => throw Exception('Unexpected binary operator: $symbol'),
   };
 }
 

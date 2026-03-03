@@ -1,12 +1,17 @@
-import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/expression/syntax_expression.dart';
+import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/expressions/syntax_expression.dart';
 import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';
-import 'package:abschlussprojekt/src/models/tokenizer.dart';
+import 'package:abschlussprojekt/src/models/syntax_parser/tokenizer.dart';
 
 class SyntaxParser {
-  final List<Token> tokens;
-  int pos = 0;
+  final String rule;
+  List<Token> _tokens = [];
+  int _pos = 0;
 
-  SyntaxParser(List<Token> tokens) : tokens = [...tokens, Token(TokenType.stringLiteral, '__EOF__')];
+  SyntaxParser(this.rule) {
+    const tokenizer = Tokenizer();
+    _tokens = tokenizer.tokenize(rule);
+    _tokens.add(Token(TokenType.stringLiteral, '__EOF__'));
+  }
 
   SyntaxExpression parseSyntaxTree() {
     final expression = _parseExpression();
@@ -172,12 +177,12 @@ class SyntaxParser {
     _advance();
   }
 
-  Token _peek() => tokens[pos];
+  Token _peek() => _tokens[_pos];
 
   Token _advance() {
-    if (pos >= tokens.length) {
+    if (_pos >= _tokens.length) {
       throw Exception("Unexpected end of input");
     }
-    return tokens[pos++];
+    return _tokens[_pos++];
   }
 }

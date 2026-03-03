@@ -3,7 +3,7 @@ class Tokenizer {
 
   List<Token> tokenize(String input) {
     final tokens = <Token>[];
-    int i = 0;
+    var i = 0;
 
     while (i < input.length) {
       final c = input[i];
@@ -29,19 +29,18 @@ class Tokenizer {
       if (_isNumber(c)) {
         final buffer = StringBuffer();
         var dotted = false;
-        while (i < input.length && (_isNumber(input[i]) || !dotted && '.'.contains(input[i]))) {
+        while (i < input.length && (_isNumber(input[i]) || (!dotted && '.'.contains(input[i])))) {
           if (input[i] == '.') dotted = true;
           buffer.write(input[i]);
           i++;
         }
-        print(buffer.toString());
         tokens.add(Token(TokenType.numeralLiteral, buffer.toString()));
         continue;
       }
 
       if (_isLetter(c)) {
         final buffer = StringBuffer();
-        while (i < input.length && c.trim().isNotEmpty) {
+        while (i < input.length && input[i].trim().isNotEmpty && !_isForbiddenChar(input[i])) {
           buffer.write(input[i]);
           i++;
         }
@@ -75,13 +74,13 @@ class Tokenizer {
         continue;
       }
 
-      if ('([{'.contains(c)) {
+      if (_isOpeningParenthesis(c)) {
         tokens.add(Token(TokenType.openingParenthesis, c));
         i++;
         continue;
       }
 
-      if (')]}'.contains(c)) {
+      if (_isClosingParenthesis(c)) {
         tokens.add(Token(TokenType.closingParenthesis, c));
         i++;
         continue;
@@ -93,18 +92,22 @@ class Tokenizer {
         continue;
       }
 
-      throw Exception("Unknown character: $c");
+      throw Exception('Unknown character: $c');
     }
 
     return tokens;
   }
 
   bool _isNumber(String c) => RegExp(r'\d').hasMatch(c);
-  bool _isLetter(String c) => RegExp(r'[A-Za-z_]').hasMatch(c);
+  bool _isLetter(String c) => RegExp('[A-Za-z_]').hasMatch(c);
   bool _isStringDelimiter(String c) => '\'"'.contains(c);
   bool _isNull(String s) => s.toLowerCase() == 'null';
   bool _isBooleanLiteral(String s) => s.toLowerCase() == 'true' || s.toLowerCase() == 'false';
+  bool _isOpeningParenthesis(String c) => '([{'.contains(c);
+  bool _isClosingParenthesis(String c) => ')]}'.contains(c);
+  bool _isParenthesis(String c) => _isOpeningParenthesis(c) || _isClosingParenthesis(c);
   bool _isOperator(String s) => ['==', '!=', '<=', '>=', '&&', '||'].contains(s) || '+-*/%><=!?:.^'.contains(s);
+  bool _isForbiddenChar(String c) => _isOperator(c) || _isParenthesis(c);
 }
 
 class Token {

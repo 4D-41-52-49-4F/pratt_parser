@@ -1,0 +1,49 @@
+import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/expressions/syntax_expression.dart';
+import 'package:abschlussprojekt/src/models/syntax_parser/tokenizer.dart';
+import 'package:test/test.dart';
+
+void main() {
+  group('Test literal factory on different TokenType.', () {
+    test('Create StringLiteral from TokenType.stringLiteral', () {
+      final stringToken = Token(TokenType.stringLiteral, 'This is a test.');
+      final literal = SyntaxLiteral.literalFromToken(stringToken);
+
+      expect(literal is StringLiteral, true);
+      expect(literal.evaluate(), 'This is a test.');
+    });
+    test('Create NumeralLiteral from TokenType.numeralLiteral as int.', () {
+      final numToken = Token(TokenType.numeralLiteral, '123');
+      final literal = SyntaxLiteral.literalFromToken(numToken);
+
+      expect(literal is NumeralLiteral, true);
+      expect(literal.evaluate(), 123);
+    });
+    test('Create NumeralLiteral from TokenType.numeralLiteral as double.', () {
+      final numToken = Token(TokenType.numeralLiteral, '123.456');
+      final literal = SyntaxLiteral.literalFromToken(numToken);
+
+      expect(literal is NumeralLiteral, true);
+      expect(literal.evaluate(), 123.456);
+    });
+    test('Create BooleanLiteral from TokenType.booleanLiteral', () {
+      final booleanToken = Token(TokenType.booleanLiteral, 'true');
+      final literal = SyntaxLiteral.literalFromToken(booleanToken);
+
+      expect(literal is BooleanLiteral, true);
+      expect(literal.evaluate(), true);
+    });
+    test('Create NullLiteral from TokenType.nullLiteral', () {
+      final nullToken = Token(TokenType.nullLiteral, 'null');
+      final literal = SyntaxLiteral.literalFromToken(nullToken);
+
+      expect(literal is NullLiteral, true);
+      expect(literal.evaluate(), null);
+    });
+
+    test('Test Exception on TokenType not literal.', () {
+      final identifierToken = Token(TokenType.identifier, 'identifier');
+
+      expect(() => SyntaxLiteral.literalFromToken(identifierToken), throwsException);
+    });
+  });
+}

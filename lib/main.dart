@@ -1,5 +1,3 @@
-import 'package:abschlussprojekt/src/models/tokenizer.dart';
-
 // void main() {
 //   final rule = 'if(7 + 3 < 10)';
 

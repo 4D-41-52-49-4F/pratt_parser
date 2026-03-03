@@ -1,6 +1,5 @@
-import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/environment/environment.dart';
+import 'package:abschlussprojekt/src/models/global_environment/_variable_environment/variable_environment.dart';
 import 'package:abschlussprojekt/src/models/syntax_parser/syntax_parser.dart';
-import 'package:abschlussprojekt/src/models/tokenizer.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -17,17 +16,15 @@ void main() {
     });
 
     test('Deep access: user.profile.points', () {
-      final rule = 'user.profile.points';
-      final tokens = Tokenizer().tokenize(rule);
-      final expression = SyntaxParser(tokens).parseSyntaxTree();
+      const rule = 'user.profile.points';
+      final expression = SyntaxParser(rule).parseSyntaxTree();
 
       expect(expression.evaluate(), 150);
     });
 
     test('Comparison of two map values: user.profile.points > config.thresholds.min_points', () {
       final rule = 'user.profile.points > config.thresholds.min_points';
-      final tokens = Tokenizer().tokenize(rule);
-      final expression = SyntaxParser(tokens).parseSyntaxTree();
+      final expression = SyntaxParser(rule).parseSyntaxTree();
 
       final result = expression.evaluate();
       expect(result, isTrue);
@@ -39,8 +36,7 @@ void main() {
       });
 
       final rule = 'user.profile.points == otherUser.profile.points';
-      final tokens = Tokenizer().tokenize(rule);
-      final expression = SyntaxParser(tokens).parseSyntaxTree();
+      final expression = SyntaxParser(rule).parseSyntaxTree();
 
       expect(expression.evaluate(), isTrue);
     });

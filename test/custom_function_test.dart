@@ -1,8 +1,7 @@
 import 'dart:math';
 
-import 'package:abschlussprojekt/src/models/syntax_parser/_function_registry/_function_registry.dart';
+import 'package:abschlussprojekt/src/models/global_environment/_function_registry/function_registry.dart';
 import 'package:abschlussprojekt/src/models/syntax_parser/syntax_parser.dart';
-import 'package:abschlussprojekt/src/models/tokenizer.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -27,9 +26,7 @@ void main() {
 
     test('Expect same result from rule.', () {
       const rule = 'customFunc(8, 1, 2)';
-      const tokenizer = Tokenizer();
-      final tokens = tokenizer.tokenize(rule);
-      final parser = SyntaxParser(tokens);
+      final parser = SyntaxParser(rule);
       final expression = parser.parseSyntaxTree();
 
       expect(expression.evaluate(), 4);
@@ -37,9 +34,7 @@ void main() {
 
     test('Test deep custom function.', () {
       const rule = 'max(min(customFunc(8, 1, 2), 8), 1)';
-      const tokenizer = Tokenizer();
-      final tokens = tokenizer.tokenize(rule);
-      final parser = SyntaxParser(tokens);
+      final parser = SyntaxParser(rule);
       final expression = parser.parseSyntaxTree();
 
       expect(expression.evaluate(), 4);

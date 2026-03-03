@@ -1,7 +1,7 @@
-import 'package:abschlussprojekt/src/models/syntax_parser/_function_registry/_function_registry.dart';
-import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/environment/environment.dart';
+import 'package:abschlussprojekt/src/models/global_environment/_function_registry/function_registry.dart';
+import 'package:abschlussprojekt/src/models/global_environment/_variable_environment/variable_environment.dart';
 import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';
-import 'package:abschlussprojekt/src/models/tokenizer.dart';
+import 'package:abschlussprojekt/src/models/syntax_parser/tokenizer.dart';
 
 sealed class SyntaxExpression {
   const SyntaxExpression();
@@ -245,14 +245,14 @@ class _ExpressionExceptionHandler {
         );
       }
       if ((operator is DivisionOperator || operator is ModuloOperator) && rightOperand == 0) {
-        return _ArithmeticException('Right operand is 0 in a division context.');
+        return const _ArithmeticException('Right operand is 0 in a division context.');
       }
     }
 
     if (operator is RelationalOperator) {
       if (leftOperand is! num || rightOperand is! num) {
         return _RelationalException(
-          'Relational operators need both values to be compareable (usually a type of num): left operand: ${leftOperand.runtimeType}, right operand: ${rightOperand.runtimeType} ',
+          'Relational operators need both values to be compareable (a type of num): left operand: ${leftOperand.runtimeType}, right operand: ${rightOperand.runtimeType} ',
         );
       }
     }
@@ -276,7 +276,7 @@ class _ExpressionExceptionHandler {
 
   static Exception? getExceptionOfVariableExpression({required String identifier}) {
     final value = VariableEnvironment.getValue(identifier);
-    if (value == null) return _VariableException('Variable not Initialized.');
+    if (value == null) return const _VariableException('Variable not Initialized.');
     return null;
   }
 }
@@ -286,7 +286,7 @@ final class _UnaryException implements Exception {
   const _UnaryException(this.message);
 
   @override
-  String toString() => '$runtimeType: $message';
+  String toString() => '_UnaryException: $message';
 }
 
 final class _ArithmeticException implements Exception {
@@ -294,7 +294,7 @@ final class _ArithmeticException implements Exception {
   const _ArithmeticException(this.message);
 
   @override
-  String toString() => '$runtimeType: $message';
+  String toString() => '_ArithmeticException: $message';
 }
 
 final class _RelationalException implements Exception {
@@ -302,7 +302,7 @@ final class _RelationalException implements Exception {
   const _RelationalException(this.message);
 
   @override
-  String toString() => '$runtimeType: $message';
+  String toString() => '_RelationalException: $message';
 }
 
 final class _LogicalException implements Exception {
@@ -310,7 +310,7 @@ final class _LogicalException implements Exception {
   const _LogicalException(this.message);
 
   @override
-  String toString() => '$runtimeType: $message';
+  String toString() => '_LogicalException: $message';
 }
 
 final class _TernaryException implements Exception {
@@ -318,7 +318,7 @@ final class _TernaryException implements Exception {
   const _TernaryException(this.message);
 
   @override
-  String toString() => '$runtimeType: $message';
+  String toString() => '_TernaryException: $message';
 }
 
 final class _VariableException implements Exception {
@@ -326,7 +326,7 @@ final class _VariableException implements Exception {
   const _VariableException(this.message);
 
   @override
-  String toString() => '$runtimeType: $message';
+  String toString() => '_VariableException: $message';
 }
 
 final class _MemberException implements Exception {
@@ -334,5 +334,5 @@ final class _MemberException implements Exception {
   const _MemberException(this.message);
 
   @override
-  String toString() => '$runtimeType: $message';
+  String toString() => '_MemberException: $message';
 }
