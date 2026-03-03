@@ -41,7 +41,10 @@ class Tokenizer {
 
       if (_isLetter(c)) {
         final buffer = StringBuffer();
-        while (i < input.length && c.trim().isNotEmpty) {
+        while (i < input.length &&
+            input[i].trim().isNotEmpty &&
+            !'([{)]}'.contains(input[i]) &&
+            !_isOperator(input[i])) {
           buffer.write(input[i]);
           i++;
         }
