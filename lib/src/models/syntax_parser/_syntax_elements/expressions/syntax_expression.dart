@@ -1,7 +1,9 @@
+import 'dart:math';
+
 import 'package:abschlussprojekt/src/models/global_environment/_function_registry/function_registry.dart';
 import 'package:abschlussprojekt/src/models/global_environment/_variable_environment/variable_environment.dart';
 import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';
-import 'package:abschlussprojekt/src/models/syntax_parser/tokenizer.dart';
+import 'package:abschlussprojekt/src/models/syntax_parser/lexer.dart';
 
 sealed class SyntaxExpression {
   const SyntaxExpression();
@@ -34,12 +36,7 @@ final class UnaryExpression extends SyntaxExpression {
   dynamic evaluate() {
     final evaluatedOperand = operand.evaluate();
 
-    final exception = _ExpressionExceptionHandler.getExceptionOfUnaryExpression(
-      operator: operator,
-      operand: evaluatedOperand,
-    );
-
-    if (exception != null) throw exception;
+    _ExpressionValidator.validateUnary(operator: operator, operand: evaluatedOperand);
 
     return switch (operator) {
       NotOperator() => !evaluatedOperand,
@@ -63,21 +60,19 @@ final class BinaryExpression extends SyntaxExpression {
     final evaluatedLeftOperand = leftOperand.evaluate();
     final evaluatedRightOperand = rightOperand.evaluate();
 
-    final exception = _ExpressionExceptionHandler.getExceptionOfBinaryExpression(
+    _ExpressionValidator.validateBinary(
       operator: operator,
       leftOperand: evaluatedLeftOperand,
       rightOperand: evaluatedRightOperand,
     );
 
-    if (exception != null) throw exception;
-
     return switch (operator) {
-      ExponentOperator() => _power(evaluatedLeftOperand, evaluatedRightOperand),
+      ExponentOperator() => pow(evaluatedLeftOperand, evaluatedRightOperand),
       MultiplicationOperator() => evaluatedLeftOperand * evaluatedRightOperand,
       DivisionOperator() => evaluatedLeftOperand / evaluatedRightOperand,
       ModuloOperator() => evaluatedLeftOperand % evaluatedRightOperand,
-      PlusOperator() => evaluatedLeftOperand + evaluatedRightOperand,
-      MinusOperator() => evaluatedLeftOperand - evaluatedRightOperand,
+      AdditionOperator() => evaluatedLeftOperand + evaluatedRightOperand,
+      SubtractionOperator() => evaluatedLeftOperand - evaluatedRightOperand,
       LessThanOperator() => evaluatedLeftOperand < evaluatedRightOperand,
       LessThanOrEqualOperator() => evaluatedLeftOperand <= evaluatedRightOperand,
       GreaterThanOperator() => evaluatedLeftOperand > evaluatedRightOperand,
@@ -89,49 +84,50 @@ final class BinaryExpression extends SyntaxExpression {
     };
   }
 
-  num _power(num base, int exponent) {
-    if (exponent == 0) return 1;
-
-    final half = _power(base, exponent ~/ 2);
-
-    if (exponent % 2 == 0) {
-      return half * half;
-    } else {
-      return base * half * half;
-    }
-  }
-
   @override
   String toString() => '$runtimeType(left: $leftOperand, operator: ${operator.symbol}, right: $rightOperand)';
 }
 
 final class TernaryExpression extends SyntaxExpression {
   final SyntaxExpression condition;
-  final SyntaxExpression leftOperand;
-  final SyntaxExpression rightOperand;
+  final SyntaxExpression trueCase;
+  final SyntaxExpression falseCase;
 
-  const TernaryExpression({required this.condition, required this.leftOperand, required this.rightOperand});
+  const TernaryExpression({required this.condition, required this.trueCase, required this.falseCase});
 
   @override
   dynamic evaluate() {
     final evaluatedCondition = condition.evaluate();
+    _ExpressionValidator.validateTernary(condition: evaluatedCondition);
 
-    final exception = _ExpressionExceptionHandler.getExceptionOfTernaryExpression(condition: evaluatedCondition);
-
-    if (exception != null) throw exception;
-
-    return evaluatedCondition ? leftOperand.evaluate() : rightOperand.evaluate();
+    return evaluatedCondition ? trueCase.evaluate() : falseCase.evaluate();
   }
 
   @override
-  String toString() => '$runtimeType(condition: $condition ? left: $leftOperand : right: $rightOperand)';
+  String toString() => '$runtimeType(condition: $condition ? left: $trueCase : right: $falseCase)';
 }
 
-final class AssignmentExpression extends SyntaxExpression {
+final class VariableExpression extends SyntaxExpression {
   final String identifier;
+
+  const VariableExpression({required this.identifier});
+
+  @override
+  dynamic evaluate() {
+    _ExpressionValidator.validateVariableExpression(identifier: identifier);
+
+    final value = VariableEnvironment.getValue(identifier);
+    return value is SyntaxExpression ? value.evaluate() : value;
+  }
+
+  @override
+  String toString() => '$runtimeType($identifier)';
+}
+
+final class AssignmentExpression extends VariableExpression {
   final SyntaxExpression expression;
 
-  const AssignmentExpression({required this.identifier, required this.expression});
+  const AssignmentExpression({required super.identifier, required this.expression});
 
   @override
   dynamic evaluate() {
@@ -144,24 +140,6 @@ final class AssignmentExpression extends SyntaxExpression {
 
   @override
   String toString() => '$runtimeType($identifier = $expression)';
-}
-
-final class VariableExpression extends SyntaxExpression {
-  final String identifier;
-
-  const VariableExpression({required this.identifier});
-
-  @override
-  dynamic evaluate() {
-    final exception = _ExpressionExceptionHandler.getExceptionOfVariableExpression(identifier: identifier);
-    if (exception != null) throw exception;
-
-    final value = VariableEnvironment.getValue(identifier);
-    return value is SyntaxExpression ? value.evaluate() : value;
-  }
-
-  @override
-  String toString() => '$runtimeType($identifier)';
 }
 
 final class MemberExpression extends SyntaxExpression {
@@ -187,13 +165,17 @@ sealed class SyntaxLiteral<T> extends SyntaxExpression {
 
   const SyntaxLiteral(this.value);
 
-  static SyntaxLiteral<dynamic> literalFromToken(Token token) => switch (token.type) {
-    TokenType.stringLiteral => StringLiteral(token.value),
-    TokenType.numeralLiteral => NumeralLiteral(num.parse(token.value)),
-    TokenType.booleanLiteral => BooleanLiteral(bool.parse(token.value, caseSensitive: false)),
-    TokenType.nullLiteral => NullLiteral(null),
-    (_) => throw Exception('Unsupported literal type.'),
-  };
+  static SyntaxLiteral<dynamic> literalFromToken(Token token, {bool identifierAsString = false}) =>
+      switch (token.type) {
+        TokenType.stringLiteral => _StringLiteral._(token.lexeme),
+        TokenType.identifier => identifierAsString ? _StringLiteral._(token.lexeme) : throw _unsupported(),
+        TokenType.numeralLiteral => _NumeralLiteral._(num.parse(token.lexeme)),
+        TokenType.booleanLiteral => _BooleanLiteral._(bool.parse(token.lexeme, caseSensitive: false)),
+        TokenType.nullLiteral => const _NullLiteral._(null),
+        (_) => throw _unsupported(),
+      };
+
+  static Exception _unsupported() => Exception('Unsupported literal type.');
 
   @override
   T evaluate() => value;
@@ -202,82 +184,77 @@ sealed class SyntaxLiteral<T> extends SyntaxExpression {
   String toString() => '$runtimeType($value)';
 }
 
-final class BooleanLiteral extends SyntaxLiteral<bool> {
-  const BooleanLiteral(super.value);
+final class _BooleanLiteral extends SyntaxLiteral<bool> {
+  const _BooleanLiteral._(super.value);
 }
 
-final class NumeralLiteral extends SyntaxLiteral<num> {
-  const NumeralLiteral(super.value);
+final class _NumeralLiteral extends SyntaxLiteral<num> {
+  const _NumeralLiteral._(super.value);
 }
 
-final class StringLiteral extends SyntaxLiteral<String> {
-  const StringLiteral(super.value);
+final class _StringLiteral extends SyntaxLiteral<String> {
+  const _StringLiteral._(super.value);
 }
 
-final class NullLiteral extends SyntaxLiteral<Null> {
-  const NullLiteral(super.value);
+final class _NullLiteral extends SyntaxLiteral<Null> {
+  const _NullLiteral._(super.value);
 }
 
-class _ExpressionExceptionHandler {
-  static Exception? getExceptionOfUnaryExpression({required UnaryOperator operator, required dynamic operand}) {
+class _ExpressionValidator {
+  static void validateUnary({required UnaryOperator operator, required dynamic operand}) {
     if (operator is NotOperator) {
       if (operand is! bool) {
-        return _UnaryException('Not operator negates a boolean value. Got: ${operand.runtimeType}');
+        throw _UnaryException('Not operator negates a boolean value. Got: ${operand.runtimeType}');
       }
     }
     if (operator is UnaryMinusOperator) {
       if (operand is! num) {
-        return _UnaryException('Unary minus operator negates a num value. Got: ${operand.runtimeType}');
+        throw _UnaryException('Unary minus operator negates a num value. Got: ${operand.runtimeType}');
       }
     }
-    return null;
   }
 
-  static Exception? getExceptionOfBinaryExpression({
+  static void validateBinary({
     required BinaryOperator operator,
     required dynamic leftOperand,
     required dynamic rightOperand,
   }) {
     if (operator is ArithmeticOperator) {
       if (leftOperand is! num || rightOperand is! num) {
-        return _ArithmeticException(
+        throw _ArithmeticException(
           'Wrong type(s) for arithmetic operation: left operand: ${leftOperand.runtimeType} ${operator.symbol} right operand: ${rightOperand.runtimeType} ',
         );
       }
       if ((operator is DivisionOperator || operator is ModuloOperator) && rightOperand == 0) {
-        return const _ArithmeticException('Right operand is 0 in a division context.');
+        throw const _ArithmeticException('Right operand is 0 in a division context.');
       }
     }
 
     if (operator is RelationalOperator) {
       if (leftOperand is! num || rightOperand is! num) {
-        return _RelationalException(
+        throw _RelationalException(
           'Relational operators need both values to be compareable (a type of num): left operand: ${leftOperand.runtimeType}, right operand: ${rightOperand.runtimeType} ',
         );
       }
     }
     if (operator is LogicalOperator) {
       if (leftOperand is! bool || rightOperand is! bool) {
-        return _LogicalException(
+        throw _LogicalException(
           'Logical operators need both operands to be boolean. left operand: ${leftOperand.runtimeType} ${operator.symbol}, right operand: ${rightOperand.runtimeType} ',
         );
       }
     }
-
-    return null;
   }
 
-  static Exception? getExceptionOfTernaryExpression({required dynamic condition}) {
+  static void validateTernary({required dynamic condition}) {
     if (condition is! bool) {
-      return _TernaryException('Condition must evaluate to bool. Got: ${condition.runtimeType}');
+      throw _TernaryException('Condition must evaluate to bool. Got: ${condition.runtimeType}');
     }
-    return null;
   }
 
-  static Exception? getExceptionOfVariableExpression({required String identifier}) {
+  static void validateVariableExpression({required String identifier}) {
     final value = VariableEnvironment.getValue(identifier);
-    if (value == null) return const _VariableException('Variable not Initialized.');
-    return null;
+    if (value == null) throw const _VariableException('Variable not Initialized.');
   }
 }
 
@@ -329,10 +306,10 @@ final class _VariableException implements Exception {
   String toString() => '_VariableException: $message';
 }
 
-final class _MemberException implements Exception {
-  final String message;
-  const _MemberException(this.message);
+// final class _MemberException implements Exception {
+//   final String message;
+//   const _MemberException(this.message);
 
-  @override
-  String toString() => '_MemberException: $message';
-}
+//   @override
+//   String toString() => '_MemberException: $message';
+// }

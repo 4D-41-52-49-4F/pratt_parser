@@ -9,7 +9,7 @@ void main() {
       final parser = SyntaxParser(rule);
       final expression = parser.parseSyntaxTree();
 
-      expect(expression is NumeralLiteral, true);
+      expect(expression is SyntaxLiteral<num>, true);
       expect(expression.evaluate() is double, true);
       expect(expression.evaluate(), 3.21);
     });

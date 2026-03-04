@@ -1,5 +1,5 @@
-class Tokenizer {
-  const Tokenizer();
+class Lexer {
+  const Lexer();
 
   List<Token> tokenize(String input) {
     final tokens = <Token>[];
@@ -21,6 +21,7 @@ class Tokenizer {
           buffer.write(input[i]);
           i++;
         }
+        if (input[i] != delimiter) throw Exception('Saw unlimited String: $buffer');
         tokens.add(Token(TokenType.stringLiteral, buffer.toString()));
         i++;
         continue;
@@ -112,11 +113,11 @@ class Tokenizer {
 
 class Token {
   final TokenType type;
-  final String value;
+  final String lexeme;
 
-  Token(this.type, this.value);
+  Token(this.type, this.lexeme);
   @override
-  String toString() => '$type($value)';
+  String toString() => '$type($lexeme)';
 }
 
 enum TokenType {

@@ -1,6 +1,6 @@
 import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/expressions/syntax_expression.dart';
 import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';
-import 'package:abschlussprojekt/src/models/syntax_parser/tokenizer.dart';
+import 'package:abschlussprojekt/src/models/syntax_parser/lexer.dart';
 
 class SyntaxParser {
   final String rule;
@@ -8,8 +8,8 @@ class SyntaxParser {
   int _pos = 0;
 
   SyntaxParser(this.rule) {
-    const tokenizer = Tokenizer();
-    _tokens = tokenizer.tokenize(rule);
+    const lexer = Lexer();
+    _tokens = lexer.tokenize(rule);
     _tokens.add(Token(TokenType.stringLiteral, '__EOF__'));
   }
 
@@ -26,7 +26,7 @@ class SyntaxParser {
 
       if (token.type != TokenType.operator) break;
 
-      final operator = SyntaxOperator.fromSymbol(token.value);
+      final operator = SyntaxOperator.fromSymbol(token.lexeme);
 
       if (operator.precedence < minPrecedence) break;
 
@@ -69,7 +69,7 @@ class SyntaxParser {
               return _parseFunctionExpression(token);
             case TokenType.operator:
               {
-                final operator = SyntaxOperator.fromSymbol(activeToken.value);
+                final operator = SyntaxOperator.fromSymbol(activeToken.lexeme);
                 return switch (operator) {
                   AssignmentOperator() => _parseAssignmentExpression(token),
                   (_) => _parseVariableExpression(token),
@@ -81,7 +81,7 @@ class SyntaxParser {
         }
 
       case TokenType.operator:
-        final operator = UnaryOperator.fromSymbol(token.value);
+        final operator = UnaryOperator.fromSymbol(token.lexeme);
 
         final operand = _parseExpression(operator.precedence);
         return UnaryExpression(operator: operator, operand: operand);
@@ -92,7 +92,7 @@ class SyntaxParser {
         return expr;
 
       default:
-        throw Exception("Unexpected token: $token");
+        throw Exception('Unexpected token: $token');
     }
   }
 
@@ -115,7 +115,7 @@ class SyntaxParser {
     _consume(TokenType.operator);
     final rightOperand = _parseExpression(operator.precedence);
 
-    return TernaryExpression(condition: left, leftOperand: leftOperand, rightOperand: rightOperand);
+    return TernaryExpression(condition: left, trueCase: leftOperand, falseCase: rightOperand);
   }
 
   FunctionExpression _parseFunctionExpression(Token identifierToken) {
@@ -131,11 +131,11 @@ class SyntaxParser {
 
     _consume(TokenType.closingParenthesis);
 
-    return FunctionExpression(identifier: identifierToken.value, parameter: params);
+    return FunctionExpression(identifier: identifierToken.lexeme, parameter: params);
   }
 
   AssignmentExpression _parseAssignmentExpression(Token token) {
-    final identifier = token.value;
+    final identifier = token.lexeme;
     _consume(TokenType.operator);
     final expression = _parseExpression();
 
@@ -147,16 +147,16 @@ class SyntaxParser {
       throw Exception("Expected dot operator at this point. Shouldn't be in here!");
     }
     if (!_check(TokenType.identifier)) {
-      throw Exception("Dot operator expects a name on the right. Got: ${_peek().type}");
+      throw Exception('Dot operator expects a name on the right. Got: ${_peek().type}');
     }
 
     final token = _advance();
-    final property = StringLiteral(token.value);
+    final property = SyntaxLiteral.literalFromToken(token, identifierAsString: true);
 
     return MemberExpression(obj: left, property: property);
   }
 
-  VariableExpression _parseVariableExpression(Token token) => VariableExpression(identifier: token.value);
+  VariableExpression _parseVariableExpression(Token token) => VariableExpression(identifier: token.lexeme);
 
   bool _check(TokenType type) {
     return _peek().type == type;
@@ -172,7 +172,7 @@ class SyntaxParser {
 
   void _consume(TokenType type) {
     if (!_check(type)) {
-      throw Exception("Expected $type but found ${_peek().type} (${_peek().value})");
+      throw Exception("Expected $type but found ${_peek().type} (${_peek().lexeme})");
     }
     _advance();
   }

@@ -1,10 +1,10 @@
-import 'package:abschlussprojekt/src/models/syntax_parser/tokenizer.dart';
+import 'package:abschlussprojekt/src/models/syntax_parser/lexer.dart';
 import 'package:test/test.dart';
 
 void main() {
   test('Tokenizer: andreas(hoefer)', () {
     const string = 'andreas(hoefer)';
-    const tokenizer = Tokenizer();
+    const tokenizer = Lexer();
     final tokens = tokenizer.tokenize(string);
     expect(tokens.length, 4);
     expect(tokens[0].type, TokenType.identifier);
@@ -14,7 +14,7 @@ void main() {
   });
   test('Tokenizer: andreas123(hoefer123)', () {
     final string = 'andreas123(hoefer123)';
-    final tokenizer = Tokenizer();
+    final tokenizer = Lexer();
     final tokens = tokenizer.tokenize(string);
     expect(tokens.length, 4);
     expect(tokens[0].type, TokenType.identifier);
@@ -24,7 +24,7 @@ void main() {
   });
   test('Tokenizer: andreas123(123)', () {
     final string = 'andreas123(123)';
-    final tokenizer = Tokenizer();
+    final tokenizer = Lexer();
     final tokens = tokenizer.tokenize(string);
     expect(tokens.length, 4);
     expect(tokens[0].type, TokenType.identifier);
@@ -34,7 +34,7 @@ void main() {
   });
   test('Tokenizer: andreas123(true)', () {
     final string = 'andreas123(true)';
-    final tokenizer = Tokenizer();
+    final tokenizer = Lexer();
     final tokens = tokenizer.tokenize(string);
     expect(tokens.length, 4);
     expect(tokens[0].type, TokenType.identifier);
@@ -44,7 +44,7 @@ void main() {
   });
   test('Tokenizer: andreas("hoefer")', () {
     final string = 'andreas("hoefer")';
-    final tokenizer = Tokenizer();
+    final tokenizer = Lexer();
     final tokens = tokenizer.tokenize(string);
     expect(tokens.length, 4);
     expect(tokens[0].type, TokenType.identifier);
@@ -54,7 +54,7 @@ void main() {
   });
   test('Tokenizer: andreas(\'hoefer\')', () {
     final string = "andreas('hoefer')";
-    final tokenizer = Tokenizer();
+    final tokenizer = Lexer();
     final tokens = tokenizer.tokenize(string);
     expect(tokens.length, 4);
     expect(tokens[0].type, TokenType.identifier);
@@ -64,7 +64,7 @@ void main() {
   });
   test('Tokenizer: andreas(\'hoefer\'+hallo)', () {
     final string = "andreas('hoefer'+hallo)";
-    final tokenizer = Tokenizer();
+    final tokenizer = Lexer();
     final tokens = tokenizer.tokenize(string);
     expect(tokens.length, 6);
     expect(tokens[0].type, TokenType.identifier);
@@ -76,7 +76,7 @@ void main() {
   });
   test('Tokenizer: andreas(hoefer)+hallo', () {
     final string = 'andreas(hoefer)+hallo';
-    final tokenizer = Tokenizer();
+    final tokenizer = Lexer();
     final tokens = tokenizer.tokenize(string);
     expect(tokens.length, 6);
     expect(tokens[0].type, TokenType.identifier);
