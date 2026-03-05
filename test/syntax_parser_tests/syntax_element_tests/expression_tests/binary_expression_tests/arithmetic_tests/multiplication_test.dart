@@ -8,16 +8,16 @@ void main() {
     final operator = SyntaxOperator.fromSymbol('*') as BinaryOperator;
 
     test('Multiplication of two integers evaluates correctly.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '3'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '3'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), 15);
     });
 
     test('Multiplication with int and double evaluates to double.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '3'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '1.5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '3'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '1.5'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
       final result = expression.evaluate();
 
@@ -26,32 +26,32 @@ void main() {
     });
 
     test('Multiplication with negative numbers evaluates correctly.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-3'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-3'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), -15);
     });
 
     test('Multiplication of two negative numbers evaluates correctly.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-3'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-3'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-5'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), 15);
     });
 
     test('Multiplication with zero evaluates to zero.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '0'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '0'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), 0);
     });
 
     test('Multiplication with very large numbers evaluates correctly.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '1e308'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '2'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '1e308'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '2'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
       final result = expression.evaluate() as double;
 
@@ -59,8 +59,8 @@ void main() {
     });
 
     test('Multiplication with very small numbers evaluates correctly.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '1e-308'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '2'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '1e-308'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '2'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
       final result = expression.evaluate();
 
@@ -68,16 +68,16 @@ void main() {
     });
 
     test('Multiplication with one value not num throws Exception.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '3'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.stringLiteral, '1.5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '3'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.stringLiteral, '1.5'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate, throwsException);
     });
 
     test('Multiplication with NaN propagates NaN.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.nan}'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.nan}'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
       final result = expression.evaluate() as double;
 
@@ -102,8 +102,8 @@ void main() {
     });
 
     test('Multiplying finite number by Infinity gives Infinity', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '2'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.infinity}'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '2'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.infinity}'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate() as double;
@@ -112,8 +112,8 @@ void main() {
     });
 
     test('Multiplying finite negative number by Infinity gives -Infinity', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-2'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.infinity}'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-2'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.infinity}'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate() as double;
@@ -122,8 +122,8 @@ void main() {
     });
 
     test('Infinity multiplied by 0.0 gives NaN', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.infinity}'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '0.0'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.infinity}'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '0.0'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate() as double;
@@ -146,8 +146,8 @@ void main() {
     });
 
     test('Multiplying very large numbers overflows to Infinity', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '1e308'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '2'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '1e308'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '2'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate() as double;
@@ -155,8 +155,8 @@ void main() {
     });
 
     test('Multiplying very small numbers underflows to 0.0', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '1e-324'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '1e-324'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '1e-324'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '1e-324'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate();

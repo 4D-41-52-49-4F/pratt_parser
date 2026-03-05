@@ -5,14 +5,14 @@ import 'package:test/test.dart';
 void main() {
   group('Test null literal', () {
     test('NullLiteral value is null', () {
-      final literal = SyntaxLiteral.literalFromToken(Token(TokenType.nullLiteral, 'null'));
+      final literal = SyntaxLiteral.literalFromToken(const Token(TokenType.nullLiteral, 'null'));
 
       expect(literal is SyntaxLiteral<Null>, true);
       expect(literal.value, null);
     });
 
     test('NullLiteral value is null case agnostic', () {
-      final literal = SyntaxLiteral.literalFromToken(Token(TokenType.nullLiteral, 'NUll'));
+      final literal = SyntaxLiteral.literalFromToken(const Token(TokenType.nullLiteral, 'NUll'));
 
       expect(literal.value, null);
     });

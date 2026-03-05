@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 void main() {
   group('Test boolean literal', () {
     test('BooleanLiteral value is true', () {
-      final literal = SyntaxLiteral.literalFromToken(Token(TokenType.booleanLiteral, 'true'));
+      final literal = SyntaxLiteral.literalFromToken(const Token(TokenType.booleanLiteral, 'true'));
 
       expect(literal is SyntaxLiteral<bool>, true);
       expect(literal.value is bool, true);
@@ -13,13 +13,13 @@ void main() {
     });
 
     test('BooleanLiteral value is false', () {
-      final literal = SyntaxLiteral.literalFromToken(Token(TokenType.booleanLiteral, 'false'));
+      final literal = SyntaxLiteral.literalFromToken(const Token(TokenType.booleanLiteral, 'false'));
 
       expect(literal.value, false);
     });
 
     test('BooleanLiteral value true case agnostic', () {
-      final literal = SyntaxLiteral.literalFromToken(Token(TokenType.booleanLiteral, 'TrUe'));
+      final literal = SyntaxLiteral.literalFromToken(const Token(TokenType.booleanLiteral, 'TrUe'));
 
       expect(literal is SyntaxLiteral<bool>, true);
       expect(literal.value is bool, true);
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('BooleanLiteral value false case agnostic', () {
-      final literal = SyntaxLiteral.literalFromToken(Token(TokenType.booleanLiteral, 'FALSE'));
+      final literal = SyntaxLiteral.literalFromToken(const Token(TokenType.booleanLiteral, 'FALSE'));
 
       expect(literal.value, false);
     });

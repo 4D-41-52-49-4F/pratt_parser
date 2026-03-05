@@ -4,9 +4,9 @@ import 'package:test/test.dart';
 
 void main() {
   group('TernaryExpression false branch tests', () {
-    final conditionToken = Token(TokenType.booleanLiteral, 'false');
-    final trueCaseToken = Token(TokenType.stringLiteral, 'true case');
-    final falseCaseToken = Token(TokenType.stringLiteral, 'false case');
+    final conditionToken = const Token(TokenType.booleanLiteral, 'false');
+    final trueCaseToken = const Token(TokenType.stringLiteral, 'true case');
+    final falseCaseToken = const Token(TokenType.stringLiteral, 'false case');
 
     final condition = SyntaxLiteral.literalFromToken(conditionToken);
     final trueCase = SyntaxLiteral.literalFromToken(trueCaseToken);
@@ -25,7 +25,7 @@ void main() {
     });
 
     test('False condition works with different false case value.', () {
-      final anotherFalseCaseToken = Token(TokenType.stringLiteral, 'another false case');
+      final anotherFalseCaseToken = const Token(TokenType.stringLiteral, 'another false case');
       final anotherFalseCase = SyntaxLiteral.literalFromToken(anotherFalseCaseToken);
       final expression = TernaryExpression(condition: condition, trueCase: trueCase, falseCase: anotherFalseCase);
 
@@ -33,8 +33,8 @@ void main() {
     });
 
     test('False condition still evaluates correctly with boolean literals.', () {
-      final boolTrueToken = Token(TokenType.booleanLiteral, 'true');
-      final boolFalseToken = Token(TokenType.booleanLiteral, 'false');
+      final boolTrueToken = const Token(TokenType.booleanLiteral, 'true');
+      final boolFalseToken = const Token(TokenType.booleanLiteral, 'false');
 
       final boolTrue = SyntaxLiteral.literalFromToken(boolTrueToken);
       final boolFalse = SyntaxLiteral.literalFromToken(boolFalseToken);
@@ -45,8 +45,8 @@ void main() {
     });
 
     test('True condition evaluates correctly with int literals.', () {
-      final boolTrueToken = Token(TokenType.numeralLiteral, '42');
-      final boolFalseToken = Token(TokenType.numeralLiteral, '21');
+      final boolTrueToken = const Token(TokenType.numeralLiteral, '42');
+      final boolFalseToken = const Token(TokenType.numeralLiteral, '21');
 
       final boolTrue = SyntaxLiteral.literalFromToken(boolTrueToken);
       final boolFalse = SyntaxLiteral.literalFromToken(boolFalseToken);
@@ -57,8 +57,8 @@ void main() {
     });
 
     test('True condition evaluates correctly with double literals.', () {
-      final boolTrueToken = Token(TokenType.numeralLiteral, '42.21');
-      final boolFalseToken = Token(TokenType.numeralLiteral, '21.42');
+      final boolTrueToken = const Token(TokenType.numeralLiteral, '42.21');
+      final boolFalseToken = const Token(TokenType.numeralLiteral, '21.42');
 
       final boolTrue = SyntaxLiteral.literalFromToken(boolTrueToken);
       final boolFalse = SyntaxLiteral.literalFromToken(boolFalseToken);
@@ -69,8 +69,8 @@ void main() {
     });
 
     test('True condition evaluates correctly with null literals.', () {
-      final boolTrueToken = Token(TokenType.numeralLiteral, '21.52');
-      final boolFalseToken = Token(TokenType.nullLiteral, 'null');
+      final boolTrueToken = const Token(TokenType.numeralLiteral, '21.52');
+      final boolFalseToken = const Token(TokenType.nullLiteral, 'null');
 
       final boolTrue = SyntaxLiteral.literalFromToken(boolTrueToken);
       final boolFalse = SyntaxLiteral.literalFromToken(boolFalseToken);

@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 void main() {
   group('Test numeral literal', () {
     test('NumeralLiteral value is 42', () {
-      final literal = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '42'));
+      final literal = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '42'));
 
       expect(literal is SyntaxLiteral<num>, true);
       expect(literal.value is num, true);
@@ -13,7 +13,7 @@ void main() {
     });
 
     test('NumeralLiteral value is 42.5', () {
-      final literal = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '42.5'));
+      final literal = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '42.5'));
 
       expect(literal.value, 42.5);
     });

@@ -8,8 +8,8 @@ void main() {
     final operator = SyntaxOperator.fromSymbol('-') as BinaryOperator;
 
     test('BinaryExpression with SubtractionOperator and two integers evaluates correctly.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '6'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '2'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '6'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '2'));
 
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
       final result = expression.evaluate();
@@ -19,8 +19,8 @@ void main() {
     });
 
     test('Subtraction with int and double evaluates to double.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '3'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '0.5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '3'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '0.5'));
 
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
       final result = expression.evaluate();
@@ -30,8 +30,8 @@ void main() {
     });
 
     test('Subtraction with negative numbers evaluates correctly.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-6'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '2'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-6'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '2'));
 
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
       final result = expression.evaluate();
@@ -41,8 +41,8 @@ void main() {
     });
 
     test('Subtraction of negative numbers evaluates correctly.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-6'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-2'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-6'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-2'));
 
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
       final result = expression.evaluate();
@@ -52,8 +52,8 @@ void main() {
     });
 
     test('Subtraction with zero evaluates correctly.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '0'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '0'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
 
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
       final result = expression.evaluate();
@@ -62,8 +62,8 @@ void main() {
     });
 
     test('Subtraction with very large numbers evaluates correctly.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '1e308'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-1e308'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '1e308'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-1e308'));
 
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
       final result = expression.evaluate() as double;
@@ -73,8 +73,8 @@ void main() {
     });
 
     test('Subtraction with very small numbers evaluates correctly.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '1e-308'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '2e-308'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '1e-308'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '2e-308'));
 
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
       final result = expression.evaluate();
@@ -84,8 +84,8 @@ void main() {
     });
 
     test('Subtraction with one value not num throws Exception.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '3'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.stringLiteral, '1.5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '3'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.stringLiteral, '1.5'));
 
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
@@ -97,8 +97,8 @@ void main() {
     final operator = SyntaxOperator.fromSymbol('-') as BinaryOperator;
 
     test('Subtracting 0.0 from 0.0 gives 0.0', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '0.0'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '0.0'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '0.0'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '0.0'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate();
@@ -106,8 +106,8 @@ void main() {
     });
 
     test('Subtracting -0.0 from 0.0 gives 0.0', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '0.0'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-0.0'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '0.0'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-0.0'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate();
@@ -115,8 +115,8 @@ void main() {
     });
 
     test('0.0 minus -0.0 gives 0.0', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '0.0'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-0.0'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '0.0'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-0.0'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate();
@@ -124,8 +124,8 @@ void main() {
     });
 
     test('Subtracting Infinity from finite number gives -Infinity', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '100'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.infinity}'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '100'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.infinity}'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate() as double;
@@ -134,8 +134,8 @@ void main() {
     });
 
     test('Subtracting finite number from Infinity gives Infinity', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.infinity}'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '100'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.infinity}'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '100'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate() as double;
@@ -144,8 +144,8 @@ void main() {
     });
 
     test('Infinity minus Infinity gives NaN', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.infinity}'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.infinity}'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.infinity}'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.infinity}'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate() as double;
@@ -153,8 +153,8 @@ void main() {
     });
 
     test('Finite number minus NaN gives NaN', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '100'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.nan}'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '100'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.nan}'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate() as double;
@@ -162,8 +162,8 @@ void main() {
     });
 
     test('NaN minus finite number gives NaN', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.nan}'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '100'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.nan}'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '100'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate() as double;
@@ -171,8 +171,8 @@ void main() {
     });
 
     test('Subtracting very small numbers underflow to 0.0', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '1e-324'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '1e-324'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '1e-324'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '1e-324'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate();
@@ -180,8 +180,8 @@ void main() {
     });
 
     test('Subtracting very large numbers overflow to Infinity', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '1e308'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-1e308'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '1e308'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-1e308'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate() as double;

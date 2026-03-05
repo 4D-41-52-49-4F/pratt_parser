@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('Lexer - String Literal Tests', () {
-    final lexer = Lexer();
+    const lexer = Lexer();
 
     test('Tokenize single-quoted string literal', () {
       final tokens = lexer.tokenize('"hello"');
@@ -55,7 +55,7 @@ void main() {
   });
 
   group('Lexer - Numeral Literal Tests', () {
-    final lexer = Lexer();
+    const lexer = Lexer();
 
     test('Tokenize integer literal', () {
       final tokens = lexer.tokenize('42');
@@ -113,7 +113,7 @@ void main() {
   });
 
   group('Lexer - Boolean Literal Tests', () {
-    final lexer = Lexer();
+    const lexer = Lexer();
 
     test('Tokenize true literal', () {
       final tokens = lexer.tokenize('true');
@@ -154,7 +154,7 @@ void main() {
   });
 
   group('Lexer - Null Literal Tests', () {
-    final lexer = Lexer();
+    const lexer = Lexer();
 
     test('Tokenize null literal', () {
       final tokens = lexer.tokenize('null');
@@ -179,7 +179,7 @@ void main() {
   });
 
   group('Lexer - Identifier Tests', () {
-    final lexer = Lexer();
+    const lexer = Lexer();
 
     test('Tokenize simple identifier', () {
       final tokens = lexer.tokenize('variable');
@@ -247,7 +247,7 @@ void main() {
   });
 
   group('Lexer - Operator Tests', () {
-    final lexer = Lexer();
+    const lexer = Lexer();
 
     test('Tokenize single-character operators', () {
       final operators = ['+', '-', '*', '/', '%', '<', '>', '!', '?', ':', '.', '^'];
@@ -303,7 +303,7 @@ void main() {
   });
 
   group('Lexer - Parenthesis Tests', () {
-    final lexer = Lexer();
+    const lexer = Lexer();
 
     test('Tokenize opening parenthesis', () {
       final tokens = lexer.tokenize('(');
@@ -358,7 +358,7 @@ void main() {
   });
 
   group('Lexer - Comma Tests', () {
-    final lexer = Lexer();
+    const lexer = Lexer();
 
     test('Tokenize comma', () {
       final tokens = lexer.tokenize(',');
@@ -377,7 +377,7 @@ void main() {
   });
 
   group('Lexer - Whitespace Handling Tests', () {
-    final lexer = Lexer();
+    const lexer = Lexer();
 
     test('Skip spaces between tokens', () {
       final tokens = lexer.tokenize('a   b   c');
@@ -425,7 +425,7 @@ void main() {
   });
 
   group('Lexer - Complex Expression Tests', () {
-    final lexer = Lexer();
+    const lexer = Lexer();
 
     test('Tokenize simple arithmetic expression', () {
       final tokens = lexer.tokenize('1 + 2');
@@ -528,7 +528,7 @@ void main() {
   });
 
   group('Lexer - Error Handling Tests', () {
-    final lexer = Lexer();
+    const lexer = Lexer();
 
     test('Throw exception for unknown single character', () {
       expect(() => lexer.tokenize('@'), throwsException);
@@ -548,7 +548,7 @@ void main() {
   });
 
   group('Lexer - Edge Cases', () {
-    final lexer = Lexer();
+    const lexer = Lexer();
 
     test('Tokenize empty string', () {
       final tokens = lexer.tokenize('');

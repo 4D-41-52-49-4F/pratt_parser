@@ -5,18 +5,40 @@ import 'package:abschlussprojekt/src/models/global_environment/_variable_environ
 import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';
 import 'package:abschlussprojekt/src/models/syntax_parser/lexer.dart';
 
+/// Base class for all syntax expressions in the parser.
+///
+/// This sealed class represents the abstract syntax tree nodes for expressions
+/// that can be evaluated to produce a runtime value.
 sealed class SyntaxExpression {
   const SyntaxExpression();
 
+  /// Evaluates the expression and returns the resulting value.
+  ///
+  /// Returns the evaluated result of the expression.
   dynamic evaluate();
 }
 
+/// Represents a function call expression in the syntax tree.
+///
+/// This expression encapsulates a function identifier and its list of parameter
+/// expressions, which are evaluated and passed to the registered function.
 final class FunctionExpression extends SyntaxExpression {
+  /// The identifier/name of the function to call.
   final String identifier;
+
+  /// The list of parameter expressions passed to the function.
   final List<SyntaxExpression> parameter;
 
+  /// Creates a function expression with the given identifier and parameters.
+  ///
+  /// [identifier] is the name of the function to call.
+  /// [parameter] is the list of expressions representing the function arguments.
   const FunctionExpression({required this.identifier, required this.parameter});
 
+  /// Evaluates the function call by resolving the function and applying it
+  /// to the evaluated arguments.
+  ///
+  /// Returns the result of the function call.
   @override
   dynamic evaluate() {
     return FunctionRegistry.resolve(identifier, parameter.map((e) => e.evaluate()).toList());
@@ -26,12 +48,27 @@ final class FunctionExpression extends SyntaxExpression {
   String toString() => 'Function $identifier($parameter)';
 }
 
+/// Represents a unary expression in the syntax tree.
+///
+/// This expression applies a unary operator (such as negation or minus) to a
+/// single operand expression.
 final class UnaryExpression extends SyntaxExpression {
+  /// The unary operator to apply.
   final UnaryOperator operator;
+
+  /// The operand expression that the operator is applied to.
   final SyntaxExpression operand;
 
+  /// Creates a unary expression with the given operator and operand.
+  ///
+  /// [operator] is the unary operator to apply (e.g., NotOperator, UnaryMinusOperator).
+  /// [operand] is the expression to operate on.
   const UnaryExpression({required this.operator, required this.operand});
 
+  /// Evaluates the unary expression by first evaluating the operand,
+  /// validating the operator-operand combination, and then applying the operator.
+  ///
+  /// Returns the result of applying the unary operator to the evaluated operand.
   @override
   dynamic evaluate() {
     final evaluatedOperand = operand.evaluate();
@@ -48,15 +85,34 @@ final class UnaryExpression extends SyntaxExpression {
   String toString() => 'UnaryExpression(operator: ${operator.symbol}, operand: $operand)';
 }
 
+/// Represents a binary expression in the syntax tree.
+///
+/// This expression applies a binary operator (arithmetic, relational, logical,
+/// or equality) to two operand expressions.
 final class BinaryExpression extends SyntaxExpression {
+  /// The binary operator to apply.
   final BinaryOperator operator;
+
+  /// The left operand expression.
   final SyntaxExpression leftOperand;
+
+  /// The right operand expression.
   final SyntaxExpression rightOperand;
 
+  /// Creates a binary expression with the given operator and operands.
+  ///
+  /// [operator] is the binary operator to apply (e.g., AdditionOperator,
+  /// EqualOperator, AndOperator).
+  /// [leftOperand] is the left-hand side expression.
+  /// [rightOperand] is the right-hand side expression.
   const BinaryExpression({required this.operator, required this.leftOperand, required this.rightOperand});
 
+  /// Evaluates the binary expression by first evaluating both operands,
+  /// validating the operator-operand combination, and then applying the operator.
+  ///
+  /// Returns the result of applying the binary operator to the evaluated operands.
   @override
-  evaluate() {
+  dynamic evaluate() {
     final evaluatedLeftOperand = leftOperand.evaluate();
     final evaluatedRightOperand = rightOperand.evaluate();
 
@@ -88,13 +144,31 @@ final class BinaryExpression extends SyntaxExpression {
   String toString() => 'BinaryExpression(left: $leftOperand, operator: ${operator.symbol}, right: $rightOperand)';
 }
 
+/// Represents a ternary (conditional) expression in the syntax tree.
+///
+/// This expression evaluates a condition and returns one of two values based
+/// on whether the condition is true or false.
 final class TernaryExpression extends SyntaxExpression {
+  /// The condition expression to evaluate.
   final SyntaxExpression condition;
+
+  /// The expression to evaluate and return if the condition is true.
   final SyntaxExpression trueCase;
+
+  /// The expression to evaluate and return if the condition is false.
   final SyntaxExpression falseCase;
 
+  /// Creates a ternary expression with the given condition and cases.
+  ///
+  /// [condition] is the boolean expression to evaluate.
+  /// [trueCase] is the expression to return if the condition is true.
+  /// [falseCase] is the expression to return if the condition is false.
   const TernaryExpression({required this.condition, required this.trueCase, required this.falseCase});
 
+  /// Evaluates the ternary expression by first evaluating the condition,
+  /// validating it is a boolean, and then returning the appropriate case.
+  ///
+  /// Returns the result of either the trueCase or falseCase expression.
   @override
   dynamic evaluate() {
     final evaluatedCondition = condition.evaluate();
@@ -107,11 +181,26 @@ final class TernaryExpression extends SyntaxExpression {
   String toString() => 'TernaryExpression(condition: $condition ? left: $trueCase : right: $falseCase)';
 }
 
+/// Represents a variable expression in the syntax tree.
+///
+/// This expression retrieves the value of a variable from the variable environment
+/// by its identifier.
 final class VariableExpression extends SyntaxExpression {
+  /// The identifier/name of the variable to retrieve.
   final String identifier;
 
+  /// Creates a variable expression with the given identifier.
+  ///
+  /// [identifier] is the name of the variable to look up in the environment.
   const VariableExpression({required this.identifier});
 
+  /// Evaluates the variable expression by looking up the identifier in the
+  /// variable environment and returning its value.
+  ///
+  /// If the value is itself a SyntaxExpression, it is evaluated recursively.
+  /// Otherwise, the raw value is returned.
+  ///
+  /// Throws an exception if the variable is not initialized.
   @override
   dynamic evaluate() {
     _ExpressionValidator.validateVariableExpression(identifier: identifier);
@@ -124,11 +213,24 @@ final class VariableExpression extends SyntaxExpression {
   String toString() => 'VariableExpression($identifier)';
 }
 
+/// Represents an assignment expression in the syntax tree.
+///
+/// This expression assigns a value to a variable by evaluating the right-hand
+/// side expression and storing the result in the variable environment.
 final class AssignmentExpression extends VariableExpression {
+  /// The expression to evaluate and assign to the variable.
   final SyntaxExpression expression;
 
+  /// Creates an assignment expression with the given identifier and expression.
+  ///
+  /// [identifier] is the name of the variable to assign to.
+  /// [expression] is the expression whose value will be assigned.
   const AssignmentExpression({required super.identifier, required this.expression});
 
+  /// Evaluates the assignment expression by first evaluating the right-hand
+  /// side expression, then storing the result in the variable environment.
+  ///
+  /// Returns the evaluated value of the expression.
   @override
   dynamic evaluate() {
     final evaluatedExpression = expression.evaluate();
@@ -142,12 +244,27 @@ final class AssignmentExpression extends VariableExpression {
   String toString() => 'AssignmentExpression($identifier = $expression)';
 }
 
+/// Represents a member access expression in the syntax tree.
+///
+/// This expression accesses a property or element of an object using bracket
+/// notation.
 final class MemberExpression extends SyntaxExpression {
+  /// The object expression to access a member from.
   final SyntaxExpression obj;
+
+  /// The property/expression representing the member to access.
   final SyntaxExpression property;
 
+  /// Creates a member expression with the given object and property.
+  ///
+  /// [obj] is the object expression to access a member from.
+  /// [property] is the expression representing the property/element to access.
   const MemberExpression({required this.obj, required this.property});
 
+  /// Evaluates the member expression by first evaluating the object and
+  /// property expressions, then accessing the property on the object.
+  ///
+  /// Returns the value of the accessed property/element.
   @override
   dynamic evaluate() {
     final left = obj.evaluate();
@@ -157,14 +274,30 @@ final class MemberExpression extends SyntaxExpression {
   }
 
   @override
-  String toString() => '$runtimeType($obj.$property)';
+  String toString() => 'MemberExpression($obj.$property)';
 }
 
+/// Base class for literal expressions in the syntax tree.
+///
+/// This sealed class represents literal values such as strings, numbers,
+/// booleans, and null in the abstract syntax tree.
 sealed class SyntaxLiteral<T> extends SyntaxExpression {
+  /// The literal value stored in this expression.
   final T value;
 
+  /// Creates a syntax literal with the given value.
+  ///
+  /// [value] is the literal value to store.
   const SyntaxLiteral(this.value);
 
+  /// Creates a [SyntaxLiteral] from a [Token].
+  ///
+  /// [token] is the token to convert to a literal.
+  /// [identifierAsString] if true, treats identifier tokens as strings instead of
+  /// throwing an exception.
+  ///
+  /// Returns a [SyntaxLiteral] instance appropriate for the token type.
+  /// Throws an exception if the token type is not supported.
   static SyntaxLiteral<dynamic> literalFromToken(Token token, {bool identifierAsString = false}) =>
       switch (token.type) {
         TokenType.stringLiteral => _StringLiteral._(token.lexeme),
@@ -177,6 +310,9 @@ sealed class SyntaxLiteral<T> extends SyntaxExpression {
 
   static Exception _unsupported() => Exception('Unsupported literal type.');
 
+  /// Evaluates the literal expression by returning its stored value.
+  ///
+  /// Returns the literal value directly without further evaluation.
   @override
   T evaluate() => value;
 

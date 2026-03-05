@@ -1,8 +1,7 @@
-// void main() {
-//   final rule = 'if(7 + 3 < 10)';
+// lib/syntax_parser.dart
+library syntax_parser;
 
-//   final dummyToken = Token(TokenType.identifier, 'NIX');
-
-//   final tokens = dummyToken.tokenize(rule);
-//   print(tokens);
-// }
+export 'src/models/syntax_parser/_syntax_elements/expressions/syntax_expression.dart';
+export 'src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';
+export 'src/models/syntax_parser/lexer.dart';
+export 'src/models/syntax_parser/syntax_parser.dart';

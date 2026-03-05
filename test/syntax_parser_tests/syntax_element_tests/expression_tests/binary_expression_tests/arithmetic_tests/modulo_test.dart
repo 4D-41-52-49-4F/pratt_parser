@@ -10,8 +10,8 @@ void main() {
     test(
       'BinaryExpression with ModuloOperator as operator and NumeralLiteral as left and right operand will evaluate to remainder.',
       () {
-        final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '7'));
-        final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '3'));
+        final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '7'));
+        final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '3'));
 
         final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
@@ -23,32 +23,32 @@ void main() {
     );
 
     test('Modulo with double evaluates to double.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '7.5'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '2.5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '7.5'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '2.5'));
 
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate();
 
-      expect(result is double, true);
+      expect(result, isA<double>);
       expect(result, 0.0);
     });
 
     test('Modulo with int as one operand and double as other operand will evaluate to double.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '7'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '2.5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '7'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '2.5'));
 
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate();
 
-      expect(result is double, true);
+      expect(result, isA<double>);
       expect(result, 2.0);
     });
 
     test('Modulo with 0 as dividend evaluates to 0.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '0'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '0'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
 
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
@@ -56,8 +56,8 @@ void main() {
     });
 
     test('Modulo with negative dividend follows Dart semantics.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-7'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '3'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-7'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '3'));
 
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
@@ -65,8 +65,8 @@ void main() {
     });
 
     test('Modulo with negative divisor follows Dart semantics.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '7'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-3'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '7'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-3'));
 
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
@@ -74,8 +74,8 @@ void main() {
     });
 
     test('Modulo with both operands negative.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-7'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-3'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-7'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-3'));
 
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
@@ -83,8 +83,8 @@ void main() {
     });
 
     test('Modulo with divisor 0 throws Exception.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '0'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '0'));
 
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
@@ -92,8 +92,8 @@ void main() {
     });
 
     test('Modulo with non num literal throws Exception.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.stringLiteral, '2'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.stringLiteral, '2'));
 
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
@@ -105,18 +105,18 @@ void main() {
     final operator = SyntaxOperator.fromSymbol('%') as BinaryOperator;
 
     test('Modulo with very small doubles', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '1e-12'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '1e-13'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '1e-12'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '1e-13'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate();
-      expect(result is double, true);
+      expect(result, isA<double>);
       expect(result, closeTo(1e-13, 1e-14));
     });
 
     test('Modulo with Infinity as dividend gives NaN', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.infinity}'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.infinity}'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate() as double;
@@ -124,8 +124,8 @@ void main() {
     });
 
     test('Modulo with Infinity as divisor gives number', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.infinity}'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.infinity}'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate() as double;
@@ -134,8 +134,8 @@ void main() {
     });
 
     test('Modulo with NaN propagates NaN', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.nan}'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.nan}'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate() as double;
@@ -143,8 +143,8 @@ void main() {
     });
 
     test('Modulo consistency check: a % b == a - (a ~/ b) * b', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '17'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '17'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate();
@@ -156,8 +156,8 @@ void main() {
     });
 
     test('Modulo consistency with integer division definition.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '17'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '17'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
 
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 

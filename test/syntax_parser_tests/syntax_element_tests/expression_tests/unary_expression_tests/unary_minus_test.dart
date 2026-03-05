@@ -7,7 +7,7 @@ void main() {
   group('Test creation and evaluation of UnaryExpression.', () {
     final operator = UnaryOperator.fromSymbol('-');
     test('UnaryExpression with UnaryMinusOperator as operator and NumLiteral as operand will evaluate to itself.', () {
-      final operand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '8'));
+      final operand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '8'));
       final expression = UnaryExpression(operator: operator, operand: operand);
       final result = expression.evaluate();
 
@@ -18,7 +18,7 @@ void main() {
     test(
       'UnaryExpression with UnaryMinusOperator as operator and Expression evaluating to non-num value throws Exception.',
       () {
-        final operand = SyntaxLiteral.literalFromToken(Token(TokenType.stringLiteral, '8'));
+        final operand = SyntaxLiteral.literalFromToken(const Token(TokenType.stringLiteral, '8'));
         final expression = UnaryExpression(operator: operator, operand: operand);
 
         expect(expression.evaluate, throwsException);
