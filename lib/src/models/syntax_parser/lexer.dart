@@ -21,7 +21,7 @@ class Lexer {
           buffer.write(input[i]);
           i++;
         }
-        if (input[i] != delimiter) throw Exception('Saw unlimited String: $buffer');
+        if (i >= input.length || input[i] != delimiter) throw Exception('Saw unlimited String: $buffer');
         tokens.add(Token(TokenType.stringLiteral, buffer.toString()));
         i++;
         continue;
@@ -106,9 +106,8 @@ class Lexer {
   bool _isBooleanLiteral(String s) => s.toLowerCase() == 'true' || s.toLowerCase() == 'false';
   bool _isOpeningParenthesis(String c) => '([{'.contains(c);
   bool _isClosingParenthesis(String c) => ')]}'.contains(c);
-  bool _isParenthesis(String c) => _isOpeningParenthesis(c) || _isClosingParenthesis(c);
   bool _isOperator(String s) => ['==', '!=', '<=', '>=', '&&', '||'].contains(s) || '+-*/%><=!?:.^'.contains(s);
-  bool _isForbiddenChar(String c) => _isOperator(c) || _isParenthesis(c);
+  bool _isForbiddenChar(String c) => !_isLetter(c) && !_isNumber(c);
 }
 
 class Token {
