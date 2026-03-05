@@ -144,7 +144,7 @@ class SyntaxParser {
 
   MemberExpression _parseMemberExpression(SyntaxExpression left) {
     if (!_match(TokenType.operator)) {
-      throw Exception("Expected dot operator at this point. Shouldn't be in here!");
+      throw Exception('Expected dot operator at this point. Got: ${_peek().type}');
     }
     if (!_check(TokenType.identifier)) {
       throw Exception('Dot operator expects a name on the right. Got: ${_peek().type}');

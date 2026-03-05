@@ -45,7 +45,7 @@ final class UnaryExpression extends SyntaxExpression {
   }
 
   @override
-  String toString() => '$runtimeType(operator: ${operator.symbol}, operand: $operand)';
+  String toString() => 'UnaryExpression(operator: ${operator.symbol}, operand: $operand)';
 }
 
 final class BinaryExpression extends SyntaxExpression {
@@ -85,7 +85,7 @@ final class BinaryExpression extends SyntaxExpression {
   }
 
   @override
-  String toString() => '$runtimeType(left: $leftOperand, operator: ${operator.symbol}, right: $rightOperand)';
+  String toString() => 'BinaryExpression(left: $leftOperand, operator: ${operator.symbol}, right: $rightOperand)';
 }
 
 final class TernaryExpression extends SyntaxExpression {
@@ -104,7 +104,7 @@ final class TernaryExpression extends SyntaxExpression {
   }
 
   @override
-  String toString() => '$runtimeType(condition: $condition ? left: $trueCase : right: $falseCase)';
+  String toString() => 'TernaryExpression(condition: $condition ? left: $trueCase : right: $falseCase)';
 }
 
 final class VariableExpression extends SyntaxExpression {
@@ -121,7 +121,7 @@ final class VariableExpression extends SyntaxExpression {
   }
 
   @override
-  String toString() => '$runtimeType($identifier)';
+  String toString() => 'VariableExpression($identifier)';
 }
 
 final class AssignmentExpression extends VariableExpression {
@@ -139,7 +139,7 @@ final class AssignmentExpression extends VariableExpression {
   }
 
   @override
-  String toString() => '$runtimeType($identifier = $expression)';
+  String toString() => 'AssignmentExpression($identifier = $expression)';
 }
 
 final class MemberExpression extends SyntaxExpression {
@@ -153,7 +153,7 @@ final class MemberExpression extends SyntaxExpression {
     final left = obj.evaluate();
     final evaluatedProperty = property.evaluate();
 
-    return left['$evaluatedProperty'];
+    return left[evaluatedProperty];
   }
 
   @override

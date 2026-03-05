@@ -115,7 +115,7 @@ class Token {
   final TokenType type;
   final String lexeme;
 
-  Token(this.type, this.lexeme);
+  const Token(this.type, this.lexeme);
   @override
   String toString() => '$type($lexeme)';
 }

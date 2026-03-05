@@ -14,7 +14,9 @@ class FunctionRegistry {
   }
 
   static dynamic resolve(String name, List<dynamic> args) {
-    if (_functions[name] == null) return null;
+    if (_functions[name] == null) {
+      throw Exception('Tried to call unregisteres function. Please register the function first. $name');
+    }
     return _functions[name]!(args);
   }
 }
