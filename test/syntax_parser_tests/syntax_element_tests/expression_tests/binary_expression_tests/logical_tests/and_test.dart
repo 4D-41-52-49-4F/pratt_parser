@@ -8,32 +8,32 @@ void main() {
     final operator = SyntaxOperator.fromSymbol('&&') as BinaryOperator;
 
     test('true && true evaluates to true', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.booleanLiteral, 'true'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.booleanLiteral, 'true'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.booleanLiteral, 'true'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.booleanLiteral, 'true'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), true);
     });
 
     test('true && false evaluates to false', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.booleanLiteral, 'true'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.booleanLiteral, 'false'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.booleanLiteral, 'true'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.booleanLiteral, 'false'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), false);
     });
 
     test('false && true evaluates to false', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.booleanLiteral, 'false'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.booleanLiteral, 'true'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.booleanLiteral, 'false'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.booleanLiteral, 'true'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), false);
     });
 
     test('false && false evaluates to false', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.booleanLiteral, 'false'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.booleanLiteral, 'false'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.booleanLiteral, 'false'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.booleanLiteral, 'false'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), false);
@@ -42,13 +42,13 @@ void main() {
     test('Complex expression as operands', () {
       final leftOperand = BinaryExpression(
         operator: SyntaxOperator.fromSymbol('<') as BinaryOperator,
-        leftOperand: SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '3')),
-        rightOperand: SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5')),
+        leftOperand: SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '3')),
+        rightOperand: SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5')),
       );
       final rightOperand = BinaryExpression(
         operator: SyntaxOperator.fromSymbol('>') as BinaryOperator,
-        leftOperand: SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '10')),
-        rightOperand: SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '2')),
+        leftOperand: SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '10')),
+        rightOperand: SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '2')),
       );
 
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
@@ -57,24 +57,24 @@ void main() {
     });
 
     test('Left operand not boolean throws Exception', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '1'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.booleanLiteral, 'true'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '1'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.booleanLiteral, 'true'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate, throwsException);
     });
 
     test('Right operand not boolean throws Exception', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.booleanLiteral, 'true'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.stringLiteral, 'false'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.booleanLiteral, 'true'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.stringLiteral, 'false'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate, throwsException);
     });
 
     test('Both operands not boolean throw Exception', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '0'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.stringLiteral, 'false'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '0'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.stringLiteral, 'false'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate, throwsException);

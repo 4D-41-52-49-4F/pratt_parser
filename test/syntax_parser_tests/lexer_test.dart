@@ -425,7 +425,6 @@ void main() {
       });
 
       test('Tokenize function call-like expression', () {
-        // The lexer tokenizes: foo, (, bar, ,, baz, )
         final tokens = lexer.tokenize('foo(bar, baz)');
         expect(tokens.length, 6);
         expect(tokens[0].type, TokenType.identifier);
@@ -614,10 +613,10 @@ void main() {
       });
 
       test('Tokenize string with special characters', () {
-        final tokens = lexer.tokenize('"hello@#\$%^&*()"');
+        final tokens = lexer.tokenize(r'"hello@#$%^&*()"');
         expect(tokens.length, 1);
         expect(tokens[0].type, TokenType.stringLiteral);
-        expect(tokens[0].lexeme, 'hello@#\$%^&*()');
+        expect(tokens[0].lexeme, r'hello@#$%^&*()');
       });
 
       test('Tokenize identifier with special characters (should throw)', () {
@@ -633,7 +632,7 @@ void main() {
       });
 
       test('Tokenize very long string', () {
-        final longStr = '"' + 'a' * 1000 + '"';
+        final longStr = '"${'a' * 1000}"';
         final tokens = lexer.tokenize(longStr);
         expect(tokens.length, 1);
         expect(tokens[0].type, TokenType.stringLiteral);
@@ -643,46 +642,32 @@ void main() {
       test('Tokenize expression with all token types', () {
         final tokens = lexer.tokenize('func("str", 123, true, null, x + y)');
         expect(tokens.length, 14);
-        // func
         expect(tokens[0].type, TokenType.identifier);
         expect(tokens[0].lexeme, 'func');
-        // (
         expect(tokens[1].type, TokenType.openingParenthesis);
         expect(tokens[1].lexeme, '(');
-        // "str"
         expect(tokens[2].type, TokenType.stringLiteral);
         expect(tokens[2].lexeme, 'str');
-        // ,
         expect(tokens[3].type, TokenType.comma);
         expect(tokens[3].lexeme, ',');
-        // 123
         expect(tokens[4].type, TokenType.numeralLiteral);
         expect(tokens[4].lexeme, '123');
-        // ,
         expect(tokens[5].type, TokenType.comma);
         expect(tokens[5].lexeme, ',');
-        // true
         expect(tokens[6].type, TokenType.booleanLiteral);
         expect(tokens[6].lexeme, 'true');
-        // ,
         expect(tokens[7].type, TokenType.comma);
         expect(tokens[7].lexeme, ',');
-        // null
         expect(tokens[8].type, TokenType.nullLiteral);
         expect(tokens[8].lexeme, 'null');
-        // ,
         expect(tokens[9].type, TokenType.comma);
         expect(tokens[9].lexeme, ',');
-        // x
         expect(tokens[10].type, TokenType.identifier);
         expect(tokens[10].lexeme, 'x');
-        // +
         expect(tokens[11].type, TokenType.operator);
         expect(tokens[11].lexeme, '+');
-        // y
         expect(tokens[12].type, TokenType.identifier);
         expect(tokens[12].lexeme, 'y');
-        // )
         expect(tokens[13].type, TokenType.closingParenthesis);
         expect(tokens[13].lexeme, ')');
       });

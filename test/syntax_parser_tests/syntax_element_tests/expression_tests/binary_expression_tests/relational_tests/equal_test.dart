@@ -8,80 +8,80 @@ void main() {
     final operator = SyntaxOperator.fromSymbol('==') as BinaryOperator;
 
     test('Two integers equal', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), true);
     });
 
     test('Two integers not equal', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '3'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '7'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '3'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '7'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), false);
     });
 
     test('Integer equal to double', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5.0'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5.0'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), true);
     });
 
     test('Double equal to double', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '3.14'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '3.14'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '3.14'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '3.14'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), true);
     });
 
     test('Same strings are equal.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.stringLiteral, 'equal'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.stringLiteral, 'equal'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.stringLiteral, 'equal'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.stringLiteral, 'equal'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), true);
     });
 
     test('Different strings are not equal.', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.stringLiteral, 'not'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.stringLiteral, 'equal'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.stringLiteral, 'not'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.stringLiteral, 'equal'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), false);
     });
 
     test('"null" is not equal null', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.stringLiteral, 'null'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.nullLiteral, 'null'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.stringLiteral, 'null'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.nullLiteral, 'null'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), false);
     });
 
     test('Negative numbers equal', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-7'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-7'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-7'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-7'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), true);
     });
 
     test('Negative number not equal', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-7'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '7'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-7'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '7'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), false);
     });
 
     test('Zero equal to zero', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '0'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '0.0'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '0'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '0.0'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), true);
@@ -92,33 +92,35 @@ void main() {
     final operator = SyntaxOperator.fromSymbol('==') as BinaryOperator;
 
     test('NaN compared to any number is false', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.nan}'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '5'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.nan}'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), false);
     });
 
     test('NaN compared to NaN is false', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.nan}'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.nan}'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.nan}'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.nan}'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), false);
     });
 
     test('Infinity equal to Infinity is true', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.infinity}'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.infinity}'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.infinity}'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.infinity}'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), true);
     });
 
     test('-Infinity equal to -Infinity is true', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.negativeInfinity}'));
+      final leftOperand = SyntaxLiteral.literalFromToken(
+        const Token(TokenType.numeralLiteral, '${double.negativeInfinity}'),
+      );
       final rightOperand = SyntaxLiteral.literalFromToken(
-        Token(TokenType.numeralLiteral, '${double.negativeInfinity}'),
+        const Token(TokenType.numeralLiteral, '${double.negativeInfinity}'),
       );
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
@@ -126,9 +128,9 @@ void main() {
     });
 
     test('Infinity not equal to -Infinity', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '${double.infinity}'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.infinity}'));
       final rightOperand = SyntaxLiteral.literalFromToken(
-        Token(TokenType.numeralLiteral, '${double.negativeInfinity}'),
+        const Token(TokenType.numeralLiteral, '${double.negativeInfinity}'),
       );
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
@@ -136,24 +138,24 @@ void main() {
     });
 
     test('0.0 equal to -0.0', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '0.0'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '-0.0'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '0.0'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '-0.0'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), true);
     });
 
     test('Very large numbers comparison', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '1e308'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '1e308'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '1e308'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '1e308'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), true);
     });
 
     test('Very small numbers comparison', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '1e-308'));
-      final rightOperand = SyntaxLiteral.literalFromToken(Token(TokenType.numeralLiteral, '1e-308'));
+      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '1e-308'));
+      final rightOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '1e-308'));
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       expect(expression.evaluate(), true);

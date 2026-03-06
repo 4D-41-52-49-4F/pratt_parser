@@ -847,25 +847,25 @@ void main() {
       VariableEnvironment.addOrUpdateVariable('allowed', 'yes');
       VariableEnvironment.addOrUpdateVariable('restricted', 'no');
       VariableEnvironment.addOrUpdateVariable('data', [1, 2, 3, 4, 5]);
-      VariableEnvironment.addOrUpdateVariable('fn', (x) => x * 2);
-      VariableEnvironment.addOrUpdateVariable('condition', (x) => x > 2);
+      VariableEnvironment.addOrUpdateVariable('fn', (x) => (x as num) * 2);
+      VariableEnvironment.addOrUpdateVariable('condition', (x) => (x as num) > 2);
       VariableEnvironment.addOrUpdateVariable('sort', (list) => (list as List)..sort());
       FunctionRegistry.register('length', (args) => (args[0] as String).length);
       FunctionRegistry.register('contains', (args) => (args[0] as String).contains(args[1]));
       FunctionRegistry.register('map', (args) {
-        final List list = args[0];
-        final Function fn = args[1];
-        return list.map((e) => fn(e)).toList();
+        final list = args[0] as List;
+        final fn = args[1] as Function;
+        return list.map((e) => (fn as Function)(e)).toList();
       });
       FunctionRegistry.register('filter', (args) {
-        final List list = args[0];
-        final Function condition = args[1];
-        return list.where((e) => condition(e)).toList();
+        final list = args[0] as List;
+        final condition = args[1] as Function;
+        return list.where((e) => (condition as Function)(e) == true).toList();
       });
       FunctionRegistry.register('transform', (args) {
-        final List list = args[0];
-        final Function transformFn = args[1];
-        return transformFn(list);
+        final list = args[0] as List;
+        final transformFn = args[1] as Function;
+        return (transformFn as Function)(list);
       });
     });
 
@@ -1017,7 +1017,7 @@ void main() {
     });
 
     test('Evaluate function call with single argument', () {
-      FunctionRegistry.register('double', (args) => args[0] * 2);
+      FunctionRegistry.register('double', (args) => (args[0] as num) * 2);
       final parser = SyntaxParser('double(5)');
       final tree = parser.parseSyntaxTree();
       final result = tree.evaluate();
@@ -1025,7 +1025,7 @@ void main() {
     });
 
     test('Evaluate function call with multiple arguments', () {
-      FunctionRegistry.register('add', (args) => args[0] + args[1]);
+      FunctionRegistry.register('add', (args) => (args[0] as num) + (args[1] as num));
       final parser = SyntaxParser('add(3, 7)');
       final tree = parser.parseSyntaxTree();
       final result = tree.evaluate();
@@ -1046,8 +1046,8 @@ void main() {
     });
 
     test('Evaluate nested function calls', () {
-      FunctionRegistry.register('double', (args) => args[0] * 2);
-      FunctionRegistry.register('add', (args) => args[0] + args[1]);
+      FunctionRegistry.register('double', (args) => (args[0] as num) * 2);
+      FunctionRegistry.register('add', (args) => (args[0] as num) + (args[1] as num));
       final parser = SyntaxParser('add(double(5), 3)');
       final tree = parser.parseSyntaxTree();
       final result = tree.evaluate();
@@ -1055,7 +1055,7 @@ void main() {
     });
 
     test('Evaluate function call in binary expression', () {
-      FunctionRegistry.register('abs', (args) => args[0].abs());
+      FunctionRegistry.register('abs', (args) => (args[0] as num).abs());
       final parser = SyntaxParser('abs(-5) + 10');
       final tree = parser.parseSyntaxTree();
       final result = tree.evaluate();
@@ -1063,7 +1063,7 @@ void main() {
     });
 
     test('Evaluate function with expression arguments', () {
-      FunctionRegistry.register('sum', (args) => args.reduce((a, b) => a + b));
+      FunctionRegistry.register('sum', (args) => args.reduce((a, b) => (a as num) + (b as num)));
       final parser = SyntaxParser('sum(1 + 2, 3 * 4, 5)');
       final tree = parser.parseSyntaxTree();
       final result = tree.evaluate();
@@ -1071,7 +1071,7 @@ void main() {
     });
 
     test('Evaluate function with ternary argument', () {
-      FunctionRegistry.register('abs', (args) => args[0].abs());
+      FunctionRegistry.register('abs', (args) => (args[0] as num).abs());
       VariableEnvironment.addOrUpdateVariable('x', -10);
       final parser = SyntaxParser('abs(x > 0 ? x : -x)');
       final tree = parser.parseSyntaxTree();
@@ -1080,7 +1080,7 @@ void main() {
     });
 
     test('Evaluate function with unary operator argument', () {
-      FunctionRegistry.register('not', (args) => !args[0]);
+      FunctionRegistry.register('not', (args) => !(args[0] as bool));
       final parser = SyntaxParser('not(!true)');
       final tree = parser.parseSyntaxTree();
       final result = tree.evaluate();
@@ -1090,7 +1090,7 @@ void main() {
     test('Throw exception for unregistered function', () {
       final parser = SyntaxParser('unknownFunc(5)');
       final tree = parser.parseSyntaxTree();
-      expect(() => tree.evaluate(), throwsException);
+      expect(tree.evaluate, throwsException);
     });
   });
 
@@ -1101,7 +1101,7 @@ void main() {
 
     test('Evaluate expression mixing variables and functions', () {
       VariableEnvironment.addOrUpdateVariable('a', 5);
-      FunctionRegistry.register('double', (args) => args[0] * 2);
+      FunctionRegistry.register('double', (args) => (args[0] as num) * 2);
       final parser = SyntaxParser('double(a) + a');
       final tree = parser.parseSyntaxTree();
       final result = tree.evaluate();
@@ -1127,7 +1127,7 @@ void main() {
 
     test('Evaluate chained calculations', () {
       VariableEnvironment.addOrUpdateVariable('x', 2);
-      FunctionRegistry.register('square', (args) => args[0] * args[0]);
+      FunctionRegistry.register('square', (args) => (args[0] as num) * (args[0] as num));
       final parser = SyntaxParser('square(x) + square(x)');
       final tree = parser.parseSyntaxTree();
       final result = tree.evaluate();
@@ -1135,7 +1135,7 @@ void main() {
     });
 
     test('Evaluate conditional with function result', () {
-      FunctionRegistry.register('isEven', (args) => args[0] % 2 == 0);
+      FunctionRegistry.register('isEven', (args) => (args[0] as num) % 2 == 0);
       final parser = SyntaxParser('isEven(4) && isEven(5)');
       final tree = parser.parseSyntaxTree();
       final result = tree.evaluate();
@@ -1143,7 +1143,7 @@ void main() {
     });
 
     test('Evaluate function returning boolean used in ternary', () {
-      FunctionRegistry.register('isPositive', (args) => args[0] > 0);
+      FunctionRegistry.register('isPositive', (args) => (args[0] as num) > 0);
       VariableEnvironment.addOrUpdateVariable('num', 5);
       final parser = SyntaxParser('isPositive(num) ? "yes" : "no"');
       final tree = parser.parseSyntaxTree();
@@ -1169,8 +1169,8 @@ void main() {
 
     test('Evaluate deeply nested function calls with variables', () {
       VariableEnvironment.addOrUpdateVariable('x', 2);
-      FunctionRegistry.register('add', (args) => args[0] + args[1]);
-      FunctionRegistry.register('multiply', (args) => args[0] * args[1]);
+      FunctionRegistry.register('add', (args) => (args[0] as num) + (args[1] as num));
+      FunctionRegistry.register('multiply', (args) => (args[0] as num) * (args[1] as num));
       final parser = SyntaxParser('multiply(add(x, 3), add(x, 1))');
       final tree = parser.parseSyntaxTree();
       final result = tree.evaluate();
@@ -1180,7 +1180,7 @@ void main() {
     test('Evaluate real-world discount calculation', () {
       VariableEnvironment.addOrUpdateVariable('price', 100);
       VariableEnvironment.addOrUpdateVariable('discount', 10);
-      FunctionRegistry.register('percentOf', (args) => (args[0] * args[1]) / 100);
+      FunctionRegistry.register('percentOf', (args) => ((args[0] as num) * (args[1] as num)) / 100);
       final parser = SyntaxParser('price - percentOf(price, discount)');
       final tree = parser.parseSyntaxTree();
       final result = tree.evaluate();
@@ -1219,7 +1219,7 @@ void main() {
     });
 
     test('Evaluate deeply nested function calls', () {
-      FunctionRegistry.register('inc', (args) => args[0] + 1);
+      FunctionRegistry.register('inc', (args) => (args[0] as num) + 1);
       final parser = SyntaxParser('inc(inc(inc(inc(inc(0)))))');
       final tree = parser.parseSyntaxTree();
       final result = tree.evaluate();
@@ -1240,10 +1240,10 @@ void main() {
     });
 
     test('Evaluate with multiple function registrations', () {
-      FunctionRegistry.register('add', (args) => args[0] + args[1]);
-      FunctionRegistry.register('subtract', (args) => args[0] - args[1]);
-      FunctionRegistry.register('multiply', (args) => args[0] * args[1]);
-      FunctionRegistry.register('divide', (args) => args[0] / args[1]);
+      FunctionRegistry.register('add', (args) => (args[0] as num) + (args[1] as num));
+      FunctionRegistry.register('subtract', (args) => (args[0] as num) - (args[1] as num));
+      FunctionRegistry.register('multiply', (args) => (args[0] as num) * (args[1] as num));
+      FunctionRegistry.register('divide', (args) => (args[0] as num) / (args[1] as num));
       final parser = SyntaxParser('divide(multiply(add(10, 5), 2), subtract(5, 2))');
       final tree = parser.parseSyntaxTree();
       final result = tree.evaluate();
@@ -1270,7 +1270,7 @@ void main() {
       VariableEnvironment.addOrUpdateVariable('x', 3);
       VariableEnvironment.addOrUpdateVariable('y', 4);
       VariableEnvironment.addOrUpdateVariable('z', 5);
-      FunctionRegistry.register('sum', (args) => args.reduce((a, b) => a + b) as num);
+      FunctionRegistry.register('sum', (args) => args.reduce((a, b) => (a as num) + (b as num)) as num);
       final parser = SyntaxParser('sum(x, y, z) * 2');
       final tree = parser.parseSyntaxTree();
       final result = tree.evaluate();

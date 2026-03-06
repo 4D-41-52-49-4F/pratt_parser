@@ -186,7 +186,7 @@ void main() {
   group('Simple AssignmentExpression Tests', () {
     final state = VariableEnvironment.globalState;
 
-    setUp(() => state.clear());
+    setUp(state.clear);
 
     test('x = 5 stores value and returns it', () {
       final literal = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
@@ -276,7 +276,7 @@ void main() {
   group('Subtraction AssignmentExpression Tests (-=)', () {
     final state = VariableEnvironment.globalState;
 
-    setUp(() => state.clear());
+    setUp(state.clear);
 
     test('x -= 5 when x unset should behave like simple assignment', () {
       final literal = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
@@ -305,7 +305,7 @@ void main() {
   group('Multiplication AssignmentExpression Tests (*=)', () {
     final state = VariableEnvironment.globalState;
 
-    setUp(() => state.clear());
+    setUp(state.clear);
 
     test('x *= 5 when x unset should behave like simple assignment (x=0*5)', () {
       final literal = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));
@@ -334,7 +334,7 @@ void main() {
   group('Division AssignmentExpression Tests (/=)', () {
     final state = VariableEnvironment.globalState;
 
-    setUp(() => state.clear());
+    setUp(state.clear);
 
     test('x /= 5 when x unset should behave like simple assignment (x=0/5)', () {
       final literal = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '5'));

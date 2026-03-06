@@ -9,7 +9,7 @@ void main() {
     test(
       'UnaryExpression with NotOperator as operator and BooleanLiteral as operand will evaluate to opposite of input.',
       () {
-        final operand = SyntaxLiteral.literalFromToken(Token(TokenType.booleanLiteral, 'true'));
+        final operand = SyntaxLiteral.literalFromToken(const Token(TokenType.booleanLiteral, 'true'));
         final expression = UnaryExpression(operator: operator, operand: operand);
         final result = expression.evaluate();
 
@@ -21,7 +21,7 @@ void main() {
     test(
       'UnaryExpression with NotOperator as operator and Expression evaluating to non-boolean value throws Exception.',
       () {
-        final operand = SyntaxLiteral.literalFromToken(Token(TokenType.stringLiteral, 'true'));
+        final operand = SyntaxLiteral.literalFromToken(const Token(TokenType.stringLiteral, 'true'));
         final expression = UnaryExpression(operator: operator, operand: operand);
 
         expect(expression.evaluate, throwsException);

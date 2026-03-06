@@ -1,26 +1,24 @@
 import 'dart:math' as math;
-import 'package:test/test.dart';
 import 'package:abschlussprojekt/src/models/global_environment/_function_registry/function_registry.dart';
+import 'package:test/test.dart';
 
 void main() {
   group('FunctionRegistry - Basic Registration and Resolution', () {
-    setUp(() {
-      FunctionRegistry.clear();
-    });
+    setUp(FunctionRegistry.clear);
 
     test('Register a simple function', () {
-      FunctionRegistry.register('add', (args) => args[0] + args[1]);
+      FunctionRegistry.register('add', (args) => (args[0] as num) + (args[1] as num));
       expect(FunctionRegistry.functions.containsKey('add'), true);
     });
 
     test('Resolve and execute a registered function', () {
-      FunctionRegistry.register('add', (args) => args[0] + args[1]);
+      FunctionRegistry.register('add', (args) => (args[0] as num) + (args[1] as num));
       final result = FunctionRegistry.resolve('add', [5, 3]);
       expect(result, 8);
     });
 
     test('Resolve function with single argument', () {
-      FunctionRegistry.register('double', (args) => args[0] * 2);
+      FunctionRegistry.register('double', (args) => (args[0] as num) * 2);
       final result = FunctionRegistry.resolve('double', [5]);
       expect(result, 10);
     });
@@ -32,7 +30,7 @@ void main() {
     });
 
     test('Resolve function with many arguments', () {
-      FunctionRegistry.register('sum', (args) => args.reduce((a, b) => a + b));
+      FunctionRegistry.register('sum', (args) => args.reduce((a, b) => (a as num) + (b as num)));
       final result = FunctionRegistry.resolve('sum', [1, 2, 3, 4, 5]);
       expect(result, 15);
     });
@@ -46,9 +44,9 @@ void main() {
     });
 
     test('Register and resolve multiple different functions', () {
-      FunctionRegistry.register('add', (args) => args[0] + args[1]);
-      FunctionRegistry.register('subtract', (args) => args[0] - args[1]);
-      FunctionRegistry.register('multiply', (args) => args[0] * args[1]);
+      FunctionRegistry.register('add', (args) => (args[0] as num) + (args[1] as num));
+      FunctionRegistry.register('subtract', (args) => (args[0] as num) - (args[1] as num));
+      FunctionRegistry.register('multiply', (args) => (args[0] as num) * (args[1] as num));
 
       expect(FunctionRegistry.resolve('add', [10, 5]), 15);
       expect(FunctionRegistry.resolve('subtract', [10, 5]), 5);
@@ -57,12 +55,10 @@ void main() {
   });
 
   group('FunctionRegistry - Function Aliases', () {
-    setUp(() {
-      FunctionRegistry.clear();
-    });
+    setUp(FunctionRegistry.clear);
 
     test('Register aliases for a function', () {
-      FunctionRegistry.registerAliases(['add', 'plus', 'sum'], (args) => args[0] + args[1]);
+      FunctionRegistry.registerAliases(['add', 'plus', 'sum'], (args) => (args[0] as num) + (args[1] as num));
 
       expect(FunctionRegistry.resolve('add', [5, 3]), 8);
       expect(FunctionRegistry.resolve('plus', [5, 3]), 8);
@@ -70,7 +66,8 @@ void main() {
     });
 
     test('All aliases resolve to same function', () {
-      final func = (args) => args[0] * args[1];
+      // ignore: prefer_function_declarations_over_variables
+      final func = (args) => ((args as List)[0] as num) * args[1];
       FunctionRegistry.registerAliases(['multiply', 'mul', 'times', 'product'], func);
 
       expect(FunctionRegistry.resolve('multiply', [6, 7]), 42);
@@ -80,8 +77,8 @@ void main() {
     });
 
     test('Register multiple alias groups', () {
-      FunctionRegistry.registerAliases(['add', 'plus'], (args) => args[0] + args[1]);
-      FunctionRegistry.registerAliases(['subtract', 'minus'], (args) => args[0] - args[1]);
+      FunctionRegistry.registerAliases(['add', 'plus'], (args) => (args[0] as num) + (args[1] as num));
+      FunctionRegistry.registerAliases(['subtract', 'minus'], (args) => (args[0] as num) - (args[1] as num));
 
       expect(FunctionRegistry.resolve('add', [10, 3]), 13);
       expect(FunctionRegistry.resolve('plus', [10, 3]), 13);
@@ -101,9 +98,7 @@ void main() {
   });
 
   group('FunctionRegistry - Error Handling', () {
-    setUp(() {
-      FunctionRegistry.clear();
-    });
+    setUp(FunctionRegistry.clear);
 
     test('Throw exception for unregistered function', () {
       expect(() => FunctionRegistry.resolve('nonexistent', []), throwsException);
@@ -132,9 +127,7 @@ void main() {
   });
 
   group('FunctionRegistry - Return Types', () {
-    setUp(() {
-      FunctionRegistry.clear();
-    });
+    setUp(FunctionRegistry.clear);
 
     test('Function returning string', () {
       FunctionRegistry.register('greet', (args) => 'Hello, ${args[0]}!');
@@ -153,7 +146,7 @@ void main() {
     });
 
     test('Function returning boolean', () {
-      FunctionRegistry.register('isPositive', (args) => args[0] > 0);
+      FunctionRegistry.register('isPositive', (args) => (args[0] as num) > 0);
       expect(FunctionRegistry.resolve('isPositive', [5]), true);
       expect(FunctionRegistry.resolve('isPositive', [-5]), false);
     });
@@ -189,22 +182,23 @@ void main() {
       );
       final result = FunctionRegistry.resolve('complex', []) as Map;
       expect(result['data'], [1, 2, 3]);
-      expect(result['nested']['key'], 'value');
+      expect((result['nested'] as Map)['key'], 'value');
     });
   });
 
   group('FunctionRegistry - Argument Handling', () {
-    setUp(() {
-      FunctionRegistry.clear();
-    });
+    setUp(FunctionRegistry.clear);
 
     test('Function with string arguments', () {
-      FunctionRegistry.register('concat', (args) => args[0] + args[1]);
+      FunctionRegistry.register('concat', (args) => (args[0] as String) + (args[1] as String));
       expect(FunctionRegistry.resolve('concat', ['Hello', ' World']), 'Hello World');
     });
 
     test('Function with numeric arguments', () {
-      FunctionRegistry.register('max', (args) => args[0] > args[1] ? args[0] : args[1]);
+      FunctionRegistry.register(
+        'max',
+        (args) => (args[0] as num) > (args[1] as num) ? (args[0] as num) : (args[1] as num),
+      );
       expect(FunctionRegistry.resolve('max', [10, 20]), 20);
     });
 
@@ -247,9 +241,7 @@ void main() {
   });
 
   group('FunctionRegistry - String Operations', () {
-    setUp(() {
-      FunctionRegistry.clear();
-    });
+    setUp(FunctionRegistry.clear);
 
     test('Length function', () {
       FunctionRegistry.register('length', (args) => (args[0] as String).length);
@@ -291,32 +283,30 @@ void main() {
   });
 
   group('FunctionRegistry - Math Operations', () {
-    setUp(() {
-      FunctionRegistry.clear();
-    });
+    setUp(FunctionRegistry.clear);
 
     test('Addition function', () {
-      FunctionRegistry.register('add', (args) => args[0] + args[1]);
+      FunctionRegistry.register('add', (args) => (args[0] as num) + (args[1] as num));
       expect(FunctionRegistry.resolve('add', [5, 3]), 8);
     });
 
     test('Subtraction function', () {
-      FunctionRegistry.register('subtract', (args) => args[0] - args[1]);
+      FunctionRegistry.register('subtract', (args) => (args[0] as num) - (args[1] as num));
       expect(FunctionRegistry.resolve('subtract', [10, 3]), 7);
     });
 
     test('Multiplication function', () {
-      FunctionRegistry.register('multiply', (args) => args[0] * args[1]);
+      FunctionRegistry.register('multiply', (args) => (args[0] as num) * (args[1] as num));
       expect(FunctionRegistry.resolve('multiply', [6, 7]), 42);
     });
 
     test('Division function', () {
-      FunctionRegistry.register('divide', (args) => args[0] / args[1]);
+      FunctionRegistry.register('divide', (args) => (args[0] as num) / (args[1] as num));
       expect(FunctionRegistry.resolve('divide', [20, 4]), 5);
     });
 
     test('Modulo function', () {
-      FunctionRegistry.register('mod', (args) => args[0] % args[1]);
+      FunctionRegistry.register('mod', (args) => (args[0] as num) % (args[1] as num));
       expect(FunctionRegistry.resolve('mod', [17, 5]), 2);
     });
 
@@ -332,7 +322,7 @@ void main() {
 
     test('Min function', () {
       FunctionRegistry.register('min', (args) {
-        final list = args[0] as List;
+        final list = args[0] as List<num>;
         var minVal = list[0];
         for (final item in list) {
           if (item < minVal) minVal = item;
@@ -349,7 +339,7 @@ void main() {
 
     test('Max function', () {
       FunctionRegistry.register('max', (args) {
-        final list = args[0] as List;
+        final list = args[0] as List<num>;
         var maxVal = list[0];
         for (final item in list) {
           if (item > maxVal) maxVal = item;
@@ -366,9 +356,7 @@ void main() {
   });
 
   group('FunctionRegistry - List Operations', () {
-    setUp(() {
-      FunctionRegistry.clear();
-    });
+    setUp(FunctionRegistry.clear);
 
     test('Length of list', () {
       FunctionRegistry.register('listLength', (args) => (args[0] as List).length);
@@ -441,9 +429,7 @@ void main() {
   });
 
   group('FunctionRegistry - Type Checking and Conversion', () {
-    setUp(() {
-      FunctionRegistry.clear();
-    });
+    setUp(FunctionRegistry.clear);
 
     test('Type check - is integer', () {
       FunctionRegistry.register('isInt', (args) => args[0] is int);
@@ -497,12 +483,10 @@ void main() {
   });
 
   group('FunctionRegistry - Stateful Functions', () {
-    setUp(() {
-      FunctionRegistry.clear();
-    });
+    setUp(FunctionRegistry.clear);
 
     test('Function with closure capturing external state', () {
-      int callCount = 0;
+      var callCount = 0;
       FunctionRegistry.register('counter', (args) => ++callCount);
 
       expect(FunctionRegistry.resolve('counter', []), 1);
@@ -524,13 +508,11 @@ void main() {
   });
 
   group('FunctionRegistry - Real World Scenarios', () {
-    setUp(() {
-      FunctionRegistry.clear();
-    });
+    setUp(FunctionRegistry.clear);
 
     test('User validation functions', () {
       FunctionRegistry.register('isValidEmail', (args) => (args[0] as String).contains('@'));
-      FunctionRegistry.register('isValidAge', (args) => args[0] >= 18 && args[0] <= 120);
+      FunctionRegistry.register('isValidAge', (args) => (args[0] as num) >= 18 && (args[0] as num) <= 120);
 
       expect(FunctionRegistry.resolve('isValidEmail', ['john@example.com']), true);
       expect(FunctionRegistry.resolve('isValidEmail', ['invalid']), false);
@@ -577,28 +559,26 @@ void main() {
     });
 
     test('Order processing functions', () {
-      FunctionRegistry.register('calculateTax', (args) => args[0] * 0.19);
-      FunctionRegistry.register('calculateTotal', (args) => args[0] + args[1]);
-      FunctionRegistry.register('formatPrice', (args) => '\$${args[0].toStringAsFixed(2)}');
+      FunctionRegistry.register('calculateTax', (args) => (args[0] as num) * 0.19);
+      FunctionRegistry.register('calculateTotal', (args) => (args[0] as num) + (args[1] as num));
+      FunctionRegistry.register('formatPrice', (args) => '\$${(args[0] as num).toStringAsFixed(2)}');
 
-      final subtotal = 100;
+      const subtotal = 100;
       final tax = FunctionRegistry.resolve('calculateTax', [subtotal]) as num;
       final total = FunctionRegistry.resolve('calculateTotal', [subtotal, tax]) as num;
       final formatted = FunctionRegistry.resolve('formatPrice', [total]);
 
       expect(tax, 19);
       expect(total, 119);
-      expect(formatted, '\$119.00');
+      expect(formatted, r'$119.00');
     });
   });
 
   group('FunctionRegistry - Stress and Performance', () {
-    setUp(() {
-      FunctionRegistry.clear();
-    });
+    setUp(FunctionRegistry.clear);
 
     test('Register many functions', () {
-      for (int i = 0; i < 1000; i++) {
+      for (var i = 0; i < 1000; i++) {
         FunctionRegistry.register('func_$i', (args) => i);
       }
 
@@ -609,8 +589,8 @@ void main() {
     test('Resolve functions repeatedly', () {
       FunctionRegistry.register('identity', (args) => args[0]);
 
-      int result = 0;
-      for (int i = 0; i < 10000; i++) {
+      var result = 0;
+      for (var i = 0; i < 10000; i++) {
         result = FunctionRegistry.resolve('identity', [i]) as int;
       }
 
@@ -618,8 +598,8 @@ void main() {
     });
 
     test('Complex nested function calls', () {
-      FunctionRegistry.register('add', (args) => args[0] + args[1]);
-      FunctionRegistry.register('multiply', (args) => args[0] * args[1]);
+      FunctionRegistry.register('add', (args) => (args[0] as num) + (args[1] as num));
+      FunctionRegistry.register('multiply', (args) => (args[0] as num) * (args[1] as num));
 
       // Manually simulate: ((5 + 3) * (10 + 2))
       final sum1 = FunctionRegistry.resolve('add', [5, 3]) as int;
@@ -631,9 +611,7 @@ void main() {
   });
 
   group('FunctionRegistry - Edge Cases', () {
-    setUp(() {
-      FunctionRegistry.clear();
-    });
+    setUp(FunctionRegistry.clear);
 
     test('Function name with special characters', () {
       FunctionRegistry.register('func_with_underscore', (args) => 'underscore');
@@ -657,7 +635,7 @@ void main() {
     test('Function returning from deeply nested args', () {
       FunctionRegistry.register('deepAccess', (args) {
         final data = args[0] as Map;
-        return data['a']['b']['c']['d'];
+        return (((data['a'] as Map)['b'] as Map)['c'] as Map)['d'];
       });
 
       final result = FunctionRegistry.resolve('deepAccess', [

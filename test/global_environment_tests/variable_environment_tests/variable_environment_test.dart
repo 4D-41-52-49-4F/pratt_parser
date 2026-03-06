@@ -75,7 +75,7 @@ void main() {
       VariableEnvironment.addOrUpdateVariable('numbers', list);
 
       expect(VariableEnvironment.getValue('numbers'), list);
-      expect(VariableEnvironment.getValue('numbers').length, 5);
+      expect((VariableEnvironment.getValue('numbers') as List).length, 5);
     });
 
     test('Store and retrieve map values', () {
@@ -83,7 +83,7 @@ void main() {
       VariableEnvironment.addOrUpdateVariable('data', map);
 
       expect(VariableEnvironment.getValue('data'), map);
-      expect(VariableEnvironment.getValue('data')['key1'], 'value1');
+      expect((VariableEnvironment.getValue('data') as Map)['key1'], 'value1');
     });
 
     test('Store and retrieve null values', () {
@@ -103,9 +103,9 @@ void main() {
       };
       VariableEnvironment.addOrUpdateVariable('complex', complex);
 
-      final retrieved = VariableEnvironment.getValue('complex');
-      expect(retrieved['user']['name'], 'Alice');
-      expect(retrieved['user']['hobbies'].length, 3);
+      final retrieved = VariableEnvironment.getValue('complex') as Map;
+      expect((retrieved['user'] as Map)['name'], 'Alice');
+      expect(((retrieved['user'] as Map)['hobbies'] as List).length, 3);
       expect(retrieved['active'], true);
     });
   });
@@ -202,13 +202,13 @@ void main() {
     test('Empty list as variable value', () {
       VariableEnvironment.addOrUpdateVariable('emptyList', []);
       expect(VariableEnvironment.getValue('emptyList'), []);
-      expect(VariableEnvironment.getValue('emptyList').length, 0);
+      expect((VariableEnvironment.getValue('emptyList') as List).length, 0);
     });
 
     test('Empty map as variable value', () {
       VariableEnvironment.addOrUpdateVariable('emptyMap', {});
       expect(VariableEnvironment.getValue('emptyMap'), {});
-      expect(VariableEnvironment.getValue('emptyMap').length, 0);
+      expect((VariableEnvironment.getValue('emptyMap') as Map).length, 0);
     });
 
     test('Empty string as variable value', () {
@@ -245,9 +245,9 @@ void main() {
       VariableEnvironment.addOrUpdateVariable('currentUser', userProfile);
 
       final retrieved = VariableEnvironment.getValue('currentUser');
-      expect(retrieved['name'], 'John Doe');
-      expect(retrieved['roles'].contains('admin'), true);
-      expect(retrieved['settings']['theme'], 'dark');
+      expect((retrieved as Map)['name'], 'John Doe');
+      expect((retrieved['roles'] as List).contains('admin'), true);
+      expect((retrieved['settings'] as Map)['theme'], 'dark');
     });
 
     test('Session variables in order processing', () {
@@ -269,11 +269,11 @@ void main() {
       VariableEnvironment.addOrUpdateVariable('user', user);
 
       // Simulate updating preferences
-      var updatedUser = VariableEnvironment.getValue('user');
-      updatedUser['preferences']['newsletter'] = true;
+      var updatedUser = VariableEnvironment.getValue('user') as Map;
+      (updatedUser['preferences'] as Map)['newsletter'] = true;
       VariableEnvironment.addOrUpdateVariable('user', updatedUser);
 
-      expect(VariableEnvironment.getValue('user')['preferences']['newsletter'], true);
+      expect(((VariableEnvironment.getValue('user') as Map)['preferences'] as Map)['newsletter'], true);
     });
 
     test('Counters and metrics', () {
@@ -281,10 +281,10 @@ void main() {
       VariableEnvironment.addOrUpdateVariable('clicks', 0);
 
       // Simulate incrementing
-      var views = VariableEnvironment.getValue('pageViews');
+      var views = VariableEnvironment.getValue('pageViews') as num;
       VariableEnvironment.addOrUpdateVariable('pageViews', views + 1);
 
-      var clicks = VariableEnvironment.getValue('clicks');
+      var clicks = VariableEnvironment.getValue('clicks') as num;
       VariableEnvironment.addOrUpdateVariable('clicks', clicks + 5);
 
       expect(VariableEnvironment.getValue('pageViews'), 1);
@@ -300,7 +300,7 @@ void main() {
       VariableEnvironment.addOrUpdateVariable('isFormValid', true);
       VariableEnvironment.addOrUpdateVariable('submitInProgress', false);
 
-      final formData = VariableEnvironment.getValue('formData');
+      final formData = VariableEnvironment.getValue('formData') as Map;
       expect(formData['firstName'], 'Jane');
       expect(VariableEnvironment.getValue('isFormValid'), true);
       expect(VariableEnvironment.getValue('submitInProgress'), false);
@@ -313,14 +313,14 @@ void main() {
     });
 
     test('Multiple sequential updates', () {
-      for (int i = 0; i < 100; i++) {
+      for (var i = 0; i < 100; i++) {
         VariableEnvironment.addOrUpdateVariable('counter', i);
       }
       expect(VariableEnvironment.getValue('counter'), 99);
     });
 
     test('Many variables in state', () {
-      for (int i = 0; i < 1000; i++) {
+      for (var i = 0; i < 1000; i++) {
         VariableEnvironment.addOrUpdateVariable('var_$i', i * 2);
       }
 

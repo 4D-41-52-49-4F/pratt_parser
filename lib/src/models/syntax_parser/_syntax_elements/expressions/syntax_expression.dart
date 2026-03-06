@@ -74,10 +74,10 @@ final class UnaryExpression extends SyntaxExpression {
     _ExpressionValidator.validateUnary(operator: operator, operand: evaluatedOperand);
 
     return switch (operator) {
-      NotOperator() => !evaluatedOperand,
-      UnaryMinusOperator() => -evaluatedOperand,
-      IncrementOperator() => evaluatedOperand + 1,
-      DecrementOperator() => evaluatedOperand - 1,
+      NotOperator() => !(evaluatedOperand as bool),
+      UnaryMinusOperator() => -(evaluatedOperand as num),
+      IncrementOperator() => (evaluatedOperand as num) + 1,
+      DecrementOperator() => (evaluatedOperand as num) - 1,
     };
   }
 
@@ -123,20 +123,20 @@ final class BinaryExpression extends SyntaxExpression {
     );
 
     return switch (operator) {
-      ExponentOperator() => pow(evaluatedLeftOperand, evaluatedRightOperand),
-      MultiplicationOperator() => evaluatedLeftOperand * evaluatedRightOperand,
-      DivisionOperator() => evaluatedLeftOperand / evaluatedRightOperand,
-      ModuloOperator() => evaluatedLeftOperand % evaluatedRightOperand,
-      AdditionOperator() => evaluatedLeftOperand + evaluatedRightOperand,
-      SubtractionOperator() => evaluatedLeftOperand - evaluatedRightOperand,
-      LessThanOperator() => evaluatedLeftOperand < evaluatedRightOperand,
-      LessThanOrEqualOperator() => evaluatedLeftOperand <= evaluatedRightOperand,
-      GreaterThanOperator() => evaluatedLeftOperand > evaluatedRightOperand,
-      GreaterThanOrEqualOperator() => evaluatedLeftOperand >= evaluatedRightOperand,
+      ExponentOperator() => pow(evaluatedLeftOperand as num, evaluatedRightOperand as num),
+      MultiplicationOperator() => (evaluatedLeftOperand as num) * (evaluatedRightOperand as num),
+      DivisionOperator() => (evaluatedLeftOperand as num) / (evaluatedRightOperand as num),
+      ModuloOperator() => (evaluatedLeftOperand as num) % (evaluatedRightOperand as num),
+      AdditionOperator() => (evaluatedLeftOperand as num) + (evaluatedRightOperand as num),
+      SubtractionOperator() => (evaluatedLeftOperand as num) - (evaluatedRightOperand as num),
+      LessThanOperator() => (evaluatedLeftOperand as num) < (evaluatedRightOperand as num),
+      LessThanOrEqualOperator() => (evaluatedLeftOperand as num) <= (evaluatedRightOperand as num),
+      GreaterThanOperator() => (evaluatedLeftOperand as num) > (evaluatedRightOperand as num),
+      GreaterThanOrEqualOperator() => (evaluatedLeftOperand as num) >= (evaluatedRightOperand as num),
       EqualOperator() => evaluatedLeftOperand == evaluatedRightOperand,
       NotEqualOperator() => evaluatedLeftOperand != evaluatedRightOperand,
-      AndOperator() => evaluatedLeftOperand && evaluatedRightOperand,
-      OrOperator() => evaluatedLeftOperand || evaluatedRightOperand,
+      AndOperator() => (evaluatedLeftOperand as bool) && (evaluatedRightOperand as bool),
+      OrOperator() => (evaluatedLeftOperand as bool) || (evaluatedRightOperand as bool),
     };
   }
 
@@ -297,7 +297,7 @@ final class MemberExpression extends SyntaxExpression {
     }
 
     final evaluatedProperty = property.evaluate();
-    return left[evaluatedProperty];
+    return (left as Map)[evaluatedProperty];
   }
 
   @override
@@ -344,6 +344,8 @@ sealed class SyntaxLiteral<T> extends SyntaxExpression {
   T evaluate() => value;
 
   @override
+  // Prints the runtime type and value for easier debugging (e.g., StringLiteral(hello), NumeralLiteral(42)).
+  // ignore: no_runtimetype_tostring
   String toString() => '$runtimeType($value)';
 }
 

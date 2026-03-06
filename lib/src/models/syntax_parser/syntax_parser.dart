@@ -132,7 +132,7 @@ class SyntaxParser {
 
   /// Parses a binary expression with the given [left] operand and [operator].
   ///
-  /// The [nextMinPrecedence] is calculated based on the operator's associativity
+  /// The nextMinPrecedence is calculated based on the operator's associativity
   /// to ensure correct parsing order for operators with the same precedence.
   ///
   /// Returns a [BinaryExpression] containing the operator, left operand, and right operand.
@@ -213,7 +213,7 @@ class SyntaxParser {
     }
 
     final token = _advance();
-    late final property;
+    late final SyntaxExpression property;
     if (_peek().type == TokenType.openingParenthesis) {
       property = _parseFunctionExpression(token, [left]);
     } else {

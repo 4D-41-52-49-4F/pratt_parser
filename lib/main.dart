@@ -1,5 +1,4 @@
 // lib/syntax_parser.dart
-library syntax_parser;
 
 export 'src/models/syntax_parser/_syntax_elements/expressions/syntax_expression.dart';
 export 'src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';

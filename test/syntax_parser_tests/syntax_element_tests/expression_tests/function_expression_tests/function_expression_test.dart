@@ -8,7 +8,7 @@ void main() {
   group('FunctionExpression tests', () {
     setUp(() {
       FunctionRegistry.register('echo', (args) => args.first);
-      FunctionRegistry.register('sum', (args) => args[0] + args[1]);
+      FunctionRegistry.register('sum', (args) => (args[0] as num) + (args[1] as num));
       FunctionRegistry.register('noArgs', (args) => 'ok');
     });
 
@@ -42,7 +42,7 @@ void main() {
         expression: SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '3')),
       );
 
-      FunctionRegistry.register('double', (args) => args[0] * 2);
+      FunctionRegistry.register('double', (args) => (args[0] as num) * 2);
 
       final expression = FunctionExpression(identifier: 'double', parameter: [assignment]);
 
@@ -69,9 +69,9 @@ void main() {
 
   group('FunctionExpression nested evaluation', () {
     setUp(() {
-      FunctionRegistry.register('sum', (args) => args[0] + args[1]);
-      FunctionRegistry.register('double', (args) => args[0] * 2);
-      FunctionRegistry.register('square', (args) => args[0] * args[0]);
+      FunctionRegistry.register('sum', (args) => (args[0] as num) + (args[1] as num));
+      FunctionRegistry.register('double', (args) => (args[0] as num) * 2);
+      FunctionRegistry.register('square', (args) => (args[0] as num) * (args[0] as num));
     });
 
     test('Nested function call: sum(2, double(3))', () {
