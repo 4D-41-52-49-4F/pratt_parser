@@ -87,7 +87,6 @@ void main() {
 
     test('Tokenize decimal starting with dot', () {
       final tokens = lexer.tokenize('.5');
-      // The lexer tokenizes '.' as an operator and '5' as a numeral
       expect(tokens.length, 2);
       expect(tokens[0].type, TokenType.operator);
       expect(tokens[0].lexeme, '.');
@@ -276,324 +275,453 @@ void main() {
       expect(tokens[0].lexeme, '=');
     });
 
-    test('Tokenize multiple operators', () {
+    test('Tokenize multiple operators throws Exception.', () {
       final tokens = lexer.tokenize('+ - * /');
       expect(tokens.length, 4);
-      expect(tokens[0].lexeme, '+');
-      expect(tokens[1].lexeme, '-');
-      expect(tokens[2].lexeme, '*');
-      expect(tokens[3].lexeme, '/');
-    });
-
-    test('Tokenize comparison operators', () {
-      final tokens = lexer.tokenize('<= >= == !=');
-      expect(tokens.length, 4);
-      expect(tokens[0].lexeme, '<=');
-      expect(tokens[1].lexeme, '>=');
-      expect(tokens[2].lexeme, '==');
-      expect(tokens[3].lexeme, '!=');
-    });
-
-    test('Tokenize logical operators', () {
-      final tokens = lexer.tokenize('&& ||');
-      expect(tokens.length, 2);
-      expect(tokens[0].lexeme, '&&');
-      expect(tokens[1].lexeme, '||');
-    });
-  });
-
-  group('Lexer - Parenthesis Tests', () {
-    const lexer = Lexer();
-
-    test('Tokenize opening parenthesis', () {
-      final tokens = lexer.tokenize('(');
-      expect(tokens.length, 1);
-      expect(tokens[0].type, TokenType.openingParenthesis);
-      expect(tokens[0].lexeme, '(');
-    });
-
-    test('Tokenize closing parenthesis', () {
-      final tokens = lexer.tokenize(')');
-      expect(tokens.length, 1);
-      expect(tokens[0].type, TokenType.closingParenthesis);
-      expect(tokens[0].lexeme, ')');
-    });
-
-    test('Tokenize opening bracket', () {
-      final tokens = lexer.tokenize('[');
-      expect(tokens.length, 1);
-      expect(tokens[0].type, TokenType.openingParenthesis);
-      expect(tokens[0].lexeme, '[');
-    });
-
-    test('Tokenize closing bracket', () {
-      final tokens = lexer.tokenize(']');
-      expect(tokens.length, 1);
-      expect(tokens[0].type, TokenType.closingParenthesis);
-      expect(tokens[0].lexeme, ']');
-    });
-
-    test('Tokenize opening brace', () {
-      final tokens = lexer.tokenize('{');
-      expect(tokens.length, 1);
-      expect(tokens[0].type, TokenType.openingParenthesis);
-      expect(tokens[0].lexeme, '{');
-    });
-
-    test('Tokenize closing brace', () {
-      final tokens = lexer.tokenize('}');
-      expect(tokens.length, 1);
-      expect(tokens[0].type, TokenType.closingParenthesis);
-      expect(tokens[0].lexeme, '}');
-    });
-
-    test('Tokenize balanced parentheses', () {
-      final tokens = lexer.tokenize('(())');
-      expect(tokens.length, 4);
-      expect(tokens[0].type, TokenType.openingParenthesis);
-      expect(tokens[1].type, TokenType.openingParenthesis);
-      expect(tokens[2].type, TokenType.closingParenthesis);
-      expect(tokens[3].type, TokenType.closingParenthesis);
-    });
-  });
-
-  group('Lexer - Comma Tests', () {
-    const lexer = Lexer();
-
-    test('Tokenize comma', () {
-      final tokens = lexer.tokenize(',');
-      expect(tokens.length, 1);
-      expect(tokens[0].type, TokenType.comma);
-      expect(tokens[0].lexeme, ',');
-    });
-
-    test('Tokenize multiple commas', () {
-      final tokens = lexer.tokenize(', , ,');
-      expect(tokens.length, 3);
-      for (final token in tokens) {
-        expect(token.type, TokenType.comma);
-      }
-    });
-  });
-
-  group('Lexer - Whitespace Handling Tests', () {
-    const lexer = Lexer();
-
-    test('Skip spaces between tokens', () {
-      final tokens = lexer.tokenize('a   b   c');
-      expect(tokens.length, 3);
-      expect(tokens[0].lexeme, 'a');
-      expect(tokens[1].lexeme, 'b');
-      expect(tokens[2].lexeme, 'c');
-    });
-
-    test('Skip tabs between tokens', () {
-      final tokens = lexer.tokenize('a\tb\tc');
-      expect(tokens.length, 3);
-      expect(tokens[0].lexeme, 'a');
-      expect(tokens[1].lexeme, 'b');
-      expect(tokens[2].lexeme, 'c');
-    });
-
-    test('Skip newlines between tokens', () {
-      final tokens = lexer.tokenize('a\nb\nc');
-      expect(tokens.length, 3);
-      expect(tokens[0].lexeme, 'a');
-      expect(tokens[1].lexeme, 'b');
-      expect(tokens[2].lexeme, 'c');
-    });
-
-    test('Skip mixed whitespace', () {
-      final tokens = lexer.tokenize('a \t\n b \r c');
-      expect(tokens.length, 3);
-      expect(tokens[0].lexeme, 'a');
-      expect(tokens[1].lexeme, 'b');
-      expect(tokens[2].lexeme, 'c');
-    });
-
-    test('Handle leading whitespace', () {
-      final tokens = lexer.tokenize('   hello');
-      expect(tokens.length, 1);
-      expect(tokens[0].lexeme, 'hello');
-    });
-
-    test('Handle trailing whitespace', () {
-      final tokens = lexer.tokenize('hello   ');
-      expect(tokens.length, 1);
-      expect(tokens[0].lexeme, 'hello');
-    });
-  });
-
-  group('Lexer - Complex Expression Tests', () {
-    const lexer = Lexer();
-
-    test('Tokenize simple arithmetic expression', () {
-      final tokens = lexer.tokenize('1 + 2');
-      expect(tokens.length, 3);
-      expect(tokens[0].type, TokenType.numeralLiteral);
-      expect(tokens[0].lexeme, '1');
-      expect(tokens[1].type, TokenType.operator);
-      expect(tokens[1].lexeme, '+');
-      expect(tokens[2].type, TokenType.numeralLiteral);
-      expect(tokens[2].lexeme, '2');
-    });
-
-    test('Tokenize function call-like expression', () {
-      // The lexer tokenizes: foo, (, bar,, baz, )
-      // Note: comma is not a forbidden char, so it's included in identifier
-      final tokens = lexer.tokenize('foo(bar, baz)');
-      expect(tokens.length, 5);
-      expect(tokens[0].type, TokenType.identifier);
-      expect(tokens[0].lexeme, 'foo');
-      expect(tokens[1].type, TokenType.openingParenthesis);
-      expect(tokens[1].lexeme, '(');
-      expect(tokens[2].type, TokenType.identifier);
-      expect(tokens[2].lexeme, 'bar,');
-      expect(tokens[3].type, TokenType.identifier);
-      expect(tokens[3].lexeme, 'baz');
-      expect(tokens[4].type, TokenType.closingParenthesis);
-      expect(tokens[4].lexeme, ')');
-    });
-
-    test('Tokenize ternary expression', () {
-      final tokens = lexer.tokenize('a ? b : c');
-      expect(tokens.length, 5);
-      expect(tokens[0].type, TokenType.identifier);
-      expect(tokens[0].lexeme, 'a');
-      expect(tokens[1].type, TokenType.operator);
-      expect(tokens[1].lexeme, '?');
-      expect(tokens[2].type, TokenType.identifier);
-      expect(tokens[2].lexeme, 'b');
-      expect(tokens[3].type, TokenType.operator);
-      expect(tokens[3].lexeme, ':');
-      expect(tokens[4].type, TokenType.identifier);
-      expect(tokens[4].lexeme, 'c');
-    });
-
-    test('Tokenize boolean expression', () {
-      final tokens = lexer.tokenize('true && false || true');
-      expect(tokens.length, 5);
-      expect(tokens[0].type, TokenType.booleanLiteral);
-      expect(tokens[0].lexeme, 'true');
-      expect(tokens[1].type, TokenType.operator);
-      expect(tokens[1].lexeme, '&&');
-      expect(tokens[2].type, TokenType.booleanLiteral);
-      expect(tokens[2].lexeme, 'false');
-      expect(tokens[3].type, TokenType.operator);
-      expect(tokens[3].lexeme, '||');
-      expect(tokens[4].type, TokenType.booleanLiteral);
-      expect(tokens[4].lexeme, 'true');
-    });
-
-    test('Tokenize comparison expression', () {
-      final tokens = lexer.tokenize('x <= y && y >= z');
-      expect(tokens.length, 7);
-      expect(tokens[0].type, TokenType.identifier);
-      expect(tokens[0].lexeme, 'x');
-      expect(tokens[1].type, TokenType.operator);
-      expect(tokens[1].lexeme, '<=');
-      expect(tokens[2].type, TokenType.identifier);
-      expect(tokens[2].lexeme, 'y');
-      expect(tokens[3].type, TokenType.operator);
-      expect(tokens[3].lexeme, '&&');
-      expect(tokens[4].type, TokenType.identifier);
-      expect(tokens[4].lexeme, 'y');
-      expect(tokens[5].type, TokenType.operator);
-      expect(tokens[5].lexeme, '>=');
-      expect(tokens[6].type, TokenType.identifier);
-      expect(tokens[6].lexeme, 'z');
-    });
-
-    test('Tokenize string in expression', () {
-      final tokens = lexer.tokenize('"hello" + "world"');
-      expect(tokens.length, 3);
-      expect(tokens[0].type, TokenType.stringLiteral);
-      expect(tokens[0].lexeme, 'hello');
-      expect(tokens[1].type, TokenType.operator);
-      expect(tokens[1].lexeme, '+');
-      expect(tokens[2].type, TokenType.stringLiteral);
-      expect(tokens[2].lexeme, 'world');
-    });
-
-    test('Tokenize null in expression', () {
-      final tokens = lexer.tokenize('x == null');
-      expect(tokens.length, 3);
-      expect(tokens[0].type, TokenType.identifier);
-      expect(tokens[0].lexeme, 'x');
-      expect(tokens[1].type, TokenType.operator);
-      expect(tokens[1].lexeme, '==');
-      expect(tokens[2].type, TokenType.nullLiteral);
-      expect(tokens[2].lexeme, 'null');
-    });
-  });
-
-  group('Lexer - Error Handling Tests', () {
-    const lexer = Lexer();
-
-    test('Throw exception for unknown single character', () {
-      expect(() => lexer.tokenize('@'), throwsException);
-    });
-
-    test('Throw exception for unknown multi-character sequence', () {
-      expect(() => lexer.tokenize('@@'), throwsException);
-    });
-
-    test('Throw exception for invalid character in middle of input', () {
-      expect(() => lexer.tokenize('a @ b'), throwsException);
-    });
-
-    test('Throw exception for invalid character at end', () {
-      expect(() => lexer.tokenize('a @'), throwsException);
-    });
-  });
-
-  group('Lexer - Edge Cases', () {
-    const lexer = Lexer();
-
-    test('Tokenize empty string', () {
-      final tokens = lexer.tokenize('');
-      expect(tokens.length, 0);
-    });
-
-    test('Tokenize string with only whitespace', () {
-      final tokens = lexer.tokenize('   \t\n  ');
-      expect(tokens.length, 0);
-    });
-
-    test('Tokenize consecutive operators', () {
-      final tokens = lexer.tokenize('++--');
-      expect(tokens.length, 3);
       expect(tokens[0].type, TokenType.operator);
       expect(tokens[0].lexeme, '+');
       expect(tokens[1].type, TokenType.operator);
-      expect(tokens[1].lexeme, '+-');
+      expect(tokens[1].lexeme, '-');
       expect(tokens[2].type, TokenType.operator);
-      expect(tokens[2].lexeme, '-');
+      expect(tokens[2].lexeme, '*');
+      expect(tokens[3].type, TokenType.operator);
+      expect(tokens[3].lexeme, '/');
     });
 
-    test('Tokenize mixed case identifiers', () {
-      final tokens = lexer.tokenize('ABC abc AbC aBc');
-      expect(tokens.length, 4);
-      expect(tokens[0].lexeme, 'ABC');
-      expect(tokens[1].lexeme, 'abc');
-      expect(tokens[2].lexeme, 'AbC');
-      expect(tokens[3].lexeme, 'aBc');
+    group('Lexer - Parenthesis Tests', () {
+      const lexer = Lexer();
+
+      test('Tokenize opening parenthesis', () {
+        final tokens = lexer.tokenize('(');
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.openingParenthesis);
+        expect(tokens[0].lexeme, '(');
+      });
+
+      test('Tokenize closing parenthesis', () {
+        final tokens = lexer.tokenize(')');
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.closingParenthesis);
+        expect(tokens[0].lexeme, ')');
+      });
+
+      test('Tokenize opening bracket', () {
+        final tokens = lexer.tokenize('[');
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.openingParenthesis);
+        expect(tokens[0].lexeme, '[');
+      });
+
+      test('Tokenize closing bracket', () {
+        final tokens = lexer.tokenize(']');
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.closingParenthesis);
+        expect(tokens[0].lexeme, ']');
+      });
+
+      test('Tokenize opening brace', () {
+        final tokens = lexer.tokenize('{');
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.openingParenthesis);
+        expect(tokens[0].lexeme, '{');
+      });
+
+      test('Tokenize closing brace', () {
+        final tokens = lexer.tokenize('}');
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.closingParenthesis);
+        expect(tokens[0].lexeme, '}');
+      });
+
+      test('Tokenize balanced parentheses', () {
+        final tokens = lexer.tokenize('(())');
+        expect(tokens.length, 4);
+        expect(tokens[0].type, TokenType.openingParenthesis);
+        expect(tokens[1].type, TokenType.openingParenthesis);
+        expect(tokens[2].type, TokenType.closingParenthesis);
+        expect(tokens[3].type, TokenType.closingParenthesis);
+      });
     });
 
-    test('Tokenize identifier that looks like keyword', () {
-      final tokens = lexer.tokenize('truetrue');
-      expect(tokens.length, 1);
-      expect(tokens[0].type, TokenType.identifier);
-      expect(tokens[0].lexeme, 'truetrue');
+    group('Lexer - Comma Tests', () {
+      const lexer = Lexer();
+
+      test('Tokenize comma', () {
+        final tokens = lexer.tokenize(',');
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.comma);
+        expect(tokens[0].lexeme, ',');
+      });
+
+      test('Tokenize multiple commas', () {
+        final tokens = lexer.tokenize(', , ,');
+        expect(tokens.length, 3);
+        for (final token in tokens) {
+          expect(token.type, TokenType.comma);
+        }
+      });
     });
 
-    test('Tokenize number followed by identifier', () {
-      final tokens = lexer.tokenize('123var');
-      expect(tokens.length, 2);
-      expect(tokens[0].type, TokenType.numeralLiteral);
-      expect(tokens[0].lexeme, '123');
-      expect(tokens[1].type, TokenType.identifier);
-      expect(tokens[1].lexeme, 'var');
+    group('Lexer - Whitespace Handling Tests', () {
+      const lexer = Lexer();
+
+      test('Skip spaces between tokens', () {
+        final tokens = lexer.tokenize('a   b   c');
+        expect(tokens.length, 3);
+        expect(tokens[0].lexeme, 'a');
+        expect(tokens[1].lexeme, 'b');
+        expect(tokens[2].lexeme, 'c');
+      });
+
+      test('Skip tabs between tokens', () {
+        final tokens = lexer.tokenize('a\tb\tc');
+        expect(tokens.length, 3);
+        expect(tokens[0].lexeme, 'a');
+        expect(tokens[1].lexeme, 'b');
+        expect(tokens[2].lexeme, 'c');
+      });
+
+      test('Skip newlines between tokens', () {
+        final tokens = lexer.tokenize('a\nb\nc');
+        expect(tokens.length, 3);
+        expect(tokens[0].lexeme, 'a');
+        expect(tokens[1].lexeme, 'b');
+        expect(tokens[2].lexeme, 'c');
+      });
+
+      test('Skip mixed whitespace', () {
+        final tokens = lexer.tokenize('a \t\n b \r c');
+        expect(tokens.length, 3);
+        expect(tokens[0].lexeme, 'a');
+        expect(tokens[1].lexeme, 'b');
+        expect(tokens[2].lexeme, 'c');
+      });
+
+      test('Handle leading whitespace', () {
+        final tokens = lexer.tokenize('   hello');
+        expect(tokens.length, 1);
+        expect(tokens[0].lexeme, 'hello');
+      });
+
+      test('Handle trailing whitespace', () {
+        final tokens = lexer.tokenize('hello   ');
+        expect(tokens.length, 1);
+        expect(tokens[0].lexeme, 'hello');
+      });
+    });
+
+    group('Lexer - Complex Expression Tests', () {
+      const lexer = Lexer();
+
+      test('Tokenize simple arithmetic expression', () {
+        final tokens = lexer.tokenize('1 + 2');
+        expect(tokens.length, 3);
+        expect(tokens[0].type, TokenType.numeralLiteral);
+        expect(tokens[0].lexeme, '1');
+        expect(tokens[1].type, TokenType.operator);
+        expect(tokens[1].lexeme, '+');
+        expect(tokens[2].type, TokenType.numeralLiteral);
+        expect(tokens[2].lexeme, '2');
+      });
+
+      test('Tokenize function call-like expression', () {
+        // The lexer tokenizes: foo, (, bar, ,, baz, )
+        final tokens = lexer.tokenize('foo(bar, baz)');
+        expect(tokens.length, 6);
+        expect(tokens[0].type, TokenType.identifier);
+        expect(tokens[0].lexeme, 'foo');
+        expect(tokens[1].type, TokenType.openingParenthesis);
+        expect(tokens[1].lexeme, '(');
+        expect(tokens[2].type, TokenType.identifier);
+        expect(tokens[2].lexeme, 'bar');
+        expect(tokens[3].type, TokenType.comma);
+        expect(tokens[3].lexeme, ',');
+        expect(tokens[4].type, TokenType.identifier);
+        expect(tokens[4].lexeme, 'baz');
+        expect(tokens[5].type, TokenType.closingParenthesis);
+        expect(tokens[5].lexeme, ')');
+      });
+
+      test('Tokenize ternary expression', () {
+        final tokens = lexer.tokenize('a ? b : c');
+        expect(tokens.length, 5);
+        expect(tokens[0].type, TokenType.identifier);
+        expect(tokens[0].lexeme, 'a');
+        expect(tokens[1].type, TokenType.operator);
+        expect(tokens[1].lexeme, '?');
+        expect(tokens[2].type, TokenType.identifier);
+        expect(tokens[2].lexeme, 'b');
+        expect(tokens[3].type, TokenType.operator);
+        expect(tokens[3].lexeme, ':');
+        expect(tokens[4].type, TokenType.identifier);
+        expect(tokens[4].lexeme, 'c');
+      });
+
+      test('Tokenize boolean expression', () {
+        final tokens = lexer.tokenize('true && false || true');
+        expect(tokens.length, 5);
+        expect(tokens[0].type, TokenType.booleanLiteral);
+        expect(tokens[0].lexeme, 'true');
+        expect(tokens[1].type, TokenType.operator);
+        expect(tokens[1].lexeme, '&&');
+        expect(tokens[2].type, TokenType.booleanLiteral);
+        expect(tokens[2].lexeme, 'false');
+        expect(tokens[3].type, TokenType.operator);
+        expect(tokens[3].lexeme, '||');
+        expect(tokens[4].type, TokenType.booleanLiteral);
+        expect(tokens[4].lexeme, 'true');
+      });
+
+      test('Tokenize comparison expression', () {
+        final tokens = lexer.tokenize('x <= y && y >= z');
+        expect(tokens.length, 7);
+        expect(tokens[0].type, TokenType.identifier);
+        expect(tokens[0].lexeme, 'x');
+        expect(tokens[1].type, TokenType.operator);
+        expect(tokens[1].lexeme, '<=');
+        expect(tokens[2].type, TokenType.identifier);
+        expect(tokens[2].lexeme, 'y');
+        expect(tokens[3].type, TokenType.operator);
+        expect(tokens[3].lexeme, '&&');
+        expect(tokens[4].type, TokenType.identifier);
+        expect(tokens[4].lexeme, 'y');
+        expect(tokens[5].type, TokenType.operator);
+        expect(tokens[5].lexeme, '>=');
+        expect(tokens[6].type, TokenType.identifier);
+        expect(tokens[6].lexeme, 'z');
+      });
+
+      test('Tokenize string in expression', () {
+        final tokens = lexer.tokenize('"hello" + "world"');
+        expect(tokens.length, 3);
+        expect(tokens[0].type, TokenType.stringLiteral);
+        expect(tokens[0].lexeme, 'hello');
+        expect(tokens[1].type, TokenType.operator);
+        expect(tokens[1].lexeme, '+');
+        expect(tokens[2].type, TokenType.stringLiteral);
+        expect(tokens[2].lexeme, 'world');
+      });
+
+      test('Tokenize null in expression', () {
+        final tokens = lexer.tokenize('x == null');
+        expect(tokens.length, 3);
+        expect(tokens[0].type, TokenType.identifier);
+        expect(tokens[0].lexeme, 'x');
+        expect(tokens[1].type, TokenType.operator);
+        expect(tokens[1].lexeme, '==');
+        expect(tokens[2].type, TokenType.nullLiteral);
+        expect(tokens[2].lexeme, 'null');
+      });
+    });
+
+    group('Lexer - Error Handling Tests', () {
+      const lexer = Lexer();
+
+      test('Throw exception for unknown single character', () {
+        expect(() => lexer.tokenize('@'), throwsException);
+      });
+
+      test('Throw exception for unknown multi-character sequence', () {
+        expect(() => lexer.tokenize('@@'), throwsException);
+      });
+
+      test('Throw exception for invalid character in middle of input', () {
+        expect(() => lexer.tokenize('a @ b'), throwsException);
+      });
+
+      test('Throw exception for invalid character at end', () {
+        expect(() => lexer.tokenize('a @'), throwsException);
+      });
+    });
+
+    group('Lexer - Edge Cases', () {
+      const lexer = Lexer();
+
+      test('Tokenize empty string', () {
+        final tokens = lexer.tokenize('');
+        expect(tokens.length, 0);
+      });
+
+      test('Tokenize string with only whitespace', () {
+        final tokens = lexer.tokenize('   \t\n  ');
+        expect(tokens.length, 0);
+      });
+
+      test('Tokenize consecutive operators', () {
+        final tokens = lexer.tokenize('++--');
+        expect(tokens.length, 2);
+        expect(tokens[0].type, TokenType.operator);
+        expect(tokens[0].lexeme, '++');
+        expect(tokens[1].type, TokenType.operator);
+        expect(tokens[1].lexeme, '--');
+      });
+
+      test('Tokenize mixed case identifiers', () {
+        final tokens = lexer.tokenize('ABC abc AbC aBc');
+        expect(tokens.length, 4);
+        expect(tokens[0].lexeme, 'ABC');
+        expect(tokens[1].lexeme, 'abc');
+        expect(tokens[2].lexeme, 'AbC');
+        expect(tokens[3].lexeme, 'aBc');
+      });
+
+      test('Tokenize identifier that looks like keyword', () {
+        final tokens = lexer.tokenize('truetrue');
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.identifier);
+        expect(tokens[0].lexeme, 'truetrue');
+      });
+
+      test('Tokenize number followed by identifier', () {
+        final tokens = lexer.tokenize('123var');
+        expect(tokens.length, 2);
+        expect(tokens[0].type, TokenType.numeralLiteral);
+        expect(tokens[0].lexeme, '123');
+        expect(tokens[1].type, TokenType.identifier);
+        expect(tokens[1].lexeme, 'var');
+      });
+
+      test('Tokenize number with trailing dot', () {
+        final tokens = lexer.tokenize('123.');
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.numeralLiteral);
+        expect(tokens[0].lexeme, '123.');
+      });
+
+      test('Tokenize number with multiple dots', () {
+        final tokens = lexer.tokenize('1.2.3');
+        expect(tokens.length, 3);
+        expect(tokens[0].type, TokenType.numeralLiteral);
+        expect(tokens[0].lexeme, '1.2');
+        expect(tokens[1].type, TokenType.operator);
+        expect(tokens[1].lexeme, '.');
+        expect(tokens[2].type, TokenType.numeralLiteral);
+        expect(tokens[2].lexeme, '3');
+      });
+
+      test('Tokenize string with newline', () {
+        final tokens = lexer.tokenize('"hello\nworld"');
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.stringLiteral);
+        expect(tokens[0].lexeme, 'hello\nworld');
+      });
+
+      test('Tokenize string with tab', () {
+        final tokens = lexer.tokenize('"hello\tworld"');
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.stringLiteral);
+        expect(tokens[0].lexeme, 'hello\tworld');
+      });
+
+      test('Tokenize string with special characters', () {
+        final tokens = lexer.tokenize('"hello@#\$%^&*()"');
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.stringLiteral);
+        expect(tokens[0].lexeme, 'hello@#\$%^&*()');
+      });
+
+      test('Tokenize identifier with special characters (should throw)', () {
+        expect(() => lexer.tokenize('var@name'), throwsException);
+      });
+
+      test('Tokenize very long identifier', () {
+        final longId = 'a' * 1000;
+        final tokens = lexer.tokenize(longId);
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.identifier);
+        expect(tokens[0].lexeme, longId);
+      });
+
+      test('Tokenize very long string', () {
+        final longStr = '"' + 'a' * 1000 + '"';
+        final tokens = lexer.tokenize(longStr);
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.stringLiteral);
+        expect(tokens[0].lexeme, 'a' * 1000);
+      });
+
+      test('Tokenize expression with all token types', () {
+        final tokens = lexer.tokenize('func("str", 123, true, null, x + y)');
+        expect(tokens.length, 14);
+        // func
+        expect(tokens[0].type, TokenType.identifier);
+        expect(tokens[0].lexeme, 'func');
+        // (
+        expect(tokens[1].type, TokenType.openingParenthesis);
+        expect(tokens[1].lexeme, '(');
+        // "str"
+        expect(tokens[2].type, TokenType.stringLiteral);
+        expect(tokens[2].lexeme, 'str');
+        // ,
+        expect(tokens[3].type, TokenType.comma);
+        expect(tokens[3].lexeme, ',');
+        // 123
+        expect(tokens[4].type, TokenType.numeralLiteral);
+        expect(tokens[4].lexeme, '123');
+        // ,
+        expect(tokens[5].type, TokenType.comma);
+        expect(tokens[5].lexeme, ',');
+        // true
+        expect(tokens[6].type, TokenType.booleanLiteral);
+        expect(tokens[6].lexeme, 'true');
+        // ,
+        expect(tokens[7].type, TokenType.comma);
+        expect(tokens[7].lexeme, ',');
+        // null
+        expect(tokens[8].type, TokenType.nullLiteral);
+        expect(tokens[8].lexeme, 'null');
+        // ,
+        expect(tokens[9].type, TokenType.comma);
+        expect(tokens[9].lexeme, ',');
+        // x
+        expect(tokens[10].type, TokenType.identifier);
+        expect(tokens[10].lexeme, 'x');
+        // +
+        expect(tokens[11].type, TokenType.operator);
+        expect(tokens[11].lexeme, '+');
+        // y
+        expect(tokens[12].type, TokenType.identifier);
+        expect(tokens[12].lexeme, 'y');
+        // )
+        expect(tokens[13].type, TokenType.closingParenthesis);
+        expect(tokens[13].lexeme, ')');
+      });
+
+      test('Tokenize nested parentheses', () {
+        final tokens = lexer.tokenize('((a + b) * (c - d))');
+        expect(tokens.length, 13);
+        expect(tokens[0].lexeme, '(');
+        expect(tokens[1].lexeme, '(');
+        expect(tokens[2].lexeme, 'a');
+        expect(tokens[3].lexeme, '+');
+        expect(tokens[4].lexeme, 'b');
+        expect(tokens[5].lexeme, ')');
+        expect(tokens[6].lexeme, '*');
+        expect(tokens[7].lexeme, '(');
+        expect(tokens[8].lexeme, 'c');
+        expect(tokens[9].lexeme, '-');
+        expect(tokens[10].lexeme, 'd');
+        expect(tokens[11].lexeme, ')');
+        expect(tokens[12].lexeme, ')');
+      });
+
+      test('Tokenize boolean with mixed case', () {
+        final tokens = lexer.tokenize('True FALSE');
+        expect(tokens.length, 2);
+        expect(tokens[0].type, TokenType.booleanLiteral);
+        expect(tokens[0].lexeme, 'True');
+        expect(tokens[1].type, TokenType.booleanLiteral);
+        expect(tokens[1].lexeme, 'FALSE');
+      });
+
+      test('Tokenize null with mixed case', () {
+        final tokens = lexer.tokenize('Null NULL');
+        expect(tokens.length, 2);
+        expect(tokens[0].type, TokenType.nullLiteral);
+        expect(tokens[0].lexeme, 'Null');
+        expect(tokens[1].type, TokenType.nullLiteral);
+        expect(tokens[1].lexeme, 'NULL');
+      });
     });
   });
 }

@@ -33,6 +33,9 @@ class SyntaxParser {
   /// Returns the root expression node of the parsed syntax tree.
   SyntaxExpression parseSyntaxTree() {
     final expression = _parseExpression();
+    if (_tokens[_pos].type != TokenType.stringLiteral || _tokens[_pos].lexeme != '__EOF__') {
+      throw Exception('Unexpected tokens remaining after parsing: ${_tokens.sublist(_pos)}');
+    }
     return expression;
   }
 
@@ -102,7 +105,7 @@ class SyntaxParser {
               {
                 final operator = SyntaxOperator.fromSymbol(activeToken.lexeme);
                 return switch (operator) {
-                  AssignmentOperator() => _parseAssignmentExpression(token),
+                  AssignmentOperator() => _parseAssignmentExpression(token, operator),
                   (_) => _parseVariableExpression(token),
                 };
               }
@@ -167,10 +170,10 @@ class SyntaxParser {
   /// parameter expressions, and consumes the closing parenthesis.
   ///
   /// Returns a [FunctionExpression] with the identifier and parameter list.
-  FunctionExpression _parseFunctionExpression(Token identifierToken) {
+  FunctionExpression _parseFunctionExpression(Token identifierToken, [List<SyntaxExpression>? preparedParams]) {
     _consume(TokenType.openingParenthesis);
 
-    final params = <SyntaxExpression>[];
+    final params = <SyntaxExpression>[...preparedParams ?? []];
 
     if (!_check(TokenType.closingParenthesis)) {
       do {
@@ -188,12 +191,12 @@ class SyntaxParser {
   /// The token should be an identifier followed by an assignment operator (=).
   ///
   /// Returns an [AssignmentExpression] with the identifier and assigned expression.
-  AssignmentExpression _parseAssignmentExpression(Token token) {
+  AssignmentExpression _parseAssignmentExpression(Token token, AssignmentOperator operator) {
     final identifier = token.lexeme;
     _consume(TokenType.operator);
     final expression = _parseExpression();
 
-    return AssignmentExpression(identifier: identifier, expression: expression);
+    return AssignmentExpression(identifier: identifier, expression: expression, operator: operator);
   }
 
   /// Parses a member expression (property access) on the given [left] object.
@@ -210,7 +213,12 @@ class SyntaxParser {
     }
 
     final token = _advance();
-    final property = SyntaxLiteral.literalFromToken(token, identifierAsString: true);
+    late final property;
+    if (_peek().type == TokenType.openingParenthesis) {
+      property = _parseFunctionExpression(token, [left]);
+    } else {
+      property = SyntaxLiteral.literalFromToken(token, identifierAsString: true);
+    }
 
     return MemberExpression(obj: left, property: property);
   }
@@ -243,7 +251,7 @@ class SyntaxParser {
   /// Throws an [Exception] if the current token does not match the expected type.
   void _consume(TokenType type) {
     if (!_check(type)) {
-      throw Exception("Expected $type but found ${_peek().type} (${_peek().lexeme})");
+      throw Exception('Expected $type but found ${_peek().type} (${_peek().lexeme})');
     }
     _advance();
   }
@@ -260,7 +268,7 @@ class SyntaxParser {
   /// Returns the token at the current position before incrementing [_pos].
   Token _advance() {
     if (_pos >= _tokens.length) {
-      throw Exception("Unexpected end of input");
+      throw Exception('Unexpected end of input');
     }
     return _tokens[_pos++];
   }

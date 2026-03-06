@@ -22,7 +22,11 @@ void main() {
         '||': OrOperator,
         '?': ConditionOperator,
         ':': ElseOperator,
-        '=': AssignmentOperator,
+        '=': SimpleAssignmentOperator,
+        '+=': AdditionAssignmentOperator,
+        '-=': SubtractionAssignmentOperator,
+        '*=': MultiplicationAssignmentOperator,
+        '/=': DivisionAssignmentOperator,
       };
 
       for (final entry in mapping.entries) {
@@ -35,5 +39,4 @@ void main() {
       expect(() => SyntaxOperator.fromSymbol('@@'), throwsException);
     });
   });
-
 }

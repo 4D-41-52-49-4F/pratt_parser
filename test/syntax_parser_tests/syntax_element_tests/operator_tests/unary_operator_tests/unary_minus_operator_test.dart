@@ -11,7 +11,7 @@ void main() {
       });
 
       test('UnaryMinusOperator has correct precedence', () {
-        expect(operator.precedence, 8);
+        expect(operator.precedence, 9);
       });
 
       test('UnaryMinusOperator has right associativity', () {
@@ -21,7 +21,7 @@ void main() {
       test('UnaryMinusOperator toString contains correct information', () {
         final str = operator.toString();
         expect(str.contains('-'), true);
-        expect(str.contains('8'), true);
+        expect(str.contains('9'), true);
         expect(str.contains('right'), true);
       });
     });

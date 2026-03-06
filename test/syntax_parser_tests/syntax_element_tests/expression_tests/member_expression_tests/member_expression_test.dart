@@ -1,5 +1,6 @@
 import 'package:abschlussprojekt/src/models/global_environment/_variable_environment/variable_environment.dart';
 import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/expressions/syntax_expression.dart';
+import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';
 import 'package:abschlussprojekt/src/models/syntax_parser/lexer.dart';
 import 'package:test/test.dart';
 
@@ -102,9 +103,10 @@ void main() {
     test('Object assignment is evaluated before member access.', () {
       state['ignored'] = {'x': 5};
 
-      const assignment = AssignmentExpression(
+      final assignment = AssignmentExpression(
         identifier: 'obj',
-        expression: VariableExpression(identifier: 'ignored'),
+        operator: SyntaxOperator.fromSymbol('=') as SimpleAssignmentOperator,
+        expression: const VariableExpression(identifier: 'ignored'),
       );
 
       final member = MemberExpression(

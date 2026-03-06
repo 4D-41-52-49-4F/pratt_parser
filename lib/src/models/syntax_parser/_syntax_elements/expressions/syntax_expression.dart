@@ -40,9 +40,7 @@ final class FunctionExpression extends SyntaxExpression {
   ///
   /// Returns the result of the function call.
   @override
-  dynamic evaluate() {
-    return FunctionRegistry.resolve(identifier, parameter.map((e) => e.evaluate()).toList());
-  }
+  dynamic evaluate() => FunctionRegistry.resolve(identifier, parameter.map((e) => e.evaluate()).toList());
 
   @override
   String toString() => 'Function $identifier($parameter)';
@@ -78,6 +76,8 @@ final class UnaryExpression extends SyntaxExpression {
     return switch (operator) {
       NotOperator() => !evaluatedOperand,
       UnaryMinusOperator() => -evaluatedOperand,
+      IncrementOperator() => evaluatedOperand + 1,
+      DecrementOperator() => evaluatedOperand - 1,
     };
   }
 
@@ -218,14 +218,18 @@ final class VariableExpression extends SyntaxExpression {
 /// This expression assigns a value to a variable by evaluating the right-hand
 /// side expression and storing the result in the variable environment.
 final class AssignmentExpression extends VariableExpression {
+  /// The assignment operator.
+  final AssignmentOperator operator;
+
   /// The expression to evaluate and assign to the variable.
   final SyntaxExpression expression;
 
   /// Creates an assignment expression with the given identifier and expression.
   ///
   /// [identifier] is the name of the variable to assign to.
+  /// [operator] is the assignment operator.
   /// [expression] is the expression whose value will be assigned.
-  const AssignmentExpression({required super.identifier, required this.expression});
+  const AssignmentExpression({required super.identifier, required this.operator, required this.expression});
 
   /// Evaluates the assignment expression by first evaluating the right-hand
   /// side expression, then storing the result in the variable environment.
@@ -235,9 +239,27 @@ final class AssignmentExpression extends VariableExpression {
   dynamic evaluate() {
     final evaluatedExpression = expression.evaluate();
 
-    VariableEnvironment.addOrUpdateVariable(identifier, evaluatedExpression);
+    _ExpressionValidator.validateAssignmentExpression(identifier: identifier, operator: operator);
 
-    return evaluatedExpression;
+    return switch (operator) {
+      AdditionAssignmentOperator() => VariableEnvironment.addOrUpdateVariable(
+        identifier,
+        ((VariableEnvironment.getValue(identifier) ?? 0) as num) + evaluatedExpression,
+      ),
+      SubtractionAssignmentOperator() => VariableEnvironment.addOrUpdateVariable(
+        identifier,
+        ((VariableEnvironment.getValue(identifier) ?? 0) as num) - evaluatedExpression,
+      ),
+      MultiplicationAssignmentOperator() => VariableEnvironment.addOrUpdateVariable(
+        identifier,
+        ((VariableEnvironment.getValue(identifier) ?? 0) as num) * evaluatedExpression,
+      ),
+      DivisionAssignmentOperator() => VariableEnvironment.addOrUpdateVariable(
+        identifier,
+        ((VariableEnvironment.getValue(identifier) ?? 0) as num) / evaluatedExpression,
+      ),
+      SimpleAssignmentOperator() => VariableEnvironment.addOrUpdateVariable(identifier, evaluatedExpression),
+    };
   }
 
   @override
@@ -268,8 +290,13 @@ final class MemberExpression extends SyntaxExpression {
   @override
   dynamic evaluate() {
     final left = obj.evaluate();
-    final evaluatedProperty = property.evaluate();
 
+    // If property is a function expression (method call), evaluate it directly
+    if (property is FunctionExpression) {
+      return property.evaluate();
+    }
+
+    final evaluatedProperty = property.evaluate();
     return left[evaluatedProperty];
   }
 
@@ -348,6 +375,11 @@ class _ExpressionValidator {
         throw _UnaryException('Unary minus operator negates a num value. Got: ${operand.runtimeType}');
       }
     }
+    if (operator is IncrementOperator || operator is DecrementOperator) {
+      if (operand is! num) {
+        throw _UnaryException('Increment and decrement operators operate on num values. Got: ${operand.runtimeType}');
+      }
+    }
   }
 
   static void validateBinary({
@@ -391,6 +423,21 @@ class _ExpressionValidator {
   static void validateVariableExpression({required String identifier}) {
     final value = VariableEnvironment.getValue(identifier);
     if (value == null) throw const _VariableException('Variable not Initialized.');
+  }
+
+  static void validateAssignmentExpression({required String identifier, required AssignmentOperator operator}) {
+    // Simple assignment does not require pre-existing variable or type checks.
+    if (operator is AdditionAssignmentOperator ||
+        operator is SubtractionAssignmentOperator ||
+        operator is MultiplicationAssignmentOperator ||
+        operator is DivisionAssignmentOperator) {
+      final value = VariableEnvironment.getValue(identifier);
+      if (value != null && value is! num) {
+        throw _AssignmentException(
+          'Compound assignment operators (+=, -=, *=, /=) require the variable to be of type num. Variable $identifier is of type ${value.runtimeType}.',
+        );
+      }
+    }
   }
 }
 
@@ -440,6 +487,14 @@ final class _VariableException implements Exception {
 
   @override
   String toString() => '_VariableException: $message';
+}
+
+final class _AssignmentException implements Exception {
+  final String message;
+  const _AssignmentException(this.message);
+
+  @override
+  String toString() => '_AssignmentException: $message';
 }
 
 // final class _MemberException implements Exception {

@@ -1,5 +1,6 @@
 import 'package:abschlussprojekt/src/models/global_environment/_function_registry/function_registry.dart';
 import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/expressions/syntax_expression.dart';
+import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';
 import 'package:abschlussprojekt/src/models/syntax_parser/lexer.dart';
 import 'package:test/test.dart';
 
@@ -37,6 +38,7 @@ void main() {
     test('Evaluates parameters before calling function.', () {
       final assignment = AssignmentExpression(
         identifier: 'x',
+        operator: SyntaxOperator.fromSymbol('=') as SimpleAssignmentOperator,
         expression: SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '3')),
       );
 

@@ -16,8 +16,9 @@ class VariableEnvironment {
   ///
   /// [name] The identifier of the variable.
   /// [value] The value to assign to the variable.
-  static void addOrUpdateVariable(String name, dynamic value) {
+  static dynamic addOrUpdateVariable(String name, dynamic value) {
     _variableValues[name] = value;
+    return value;
   }
 
   /// Gets the value of a variable by name.

@@ -137,9 +137,11 @@ class Lexer {
 
   /// Returns true if the given string [s] is a valid operator.
   ///
-  /// Checks for both two-character operators (==, !=, <=, >=, &&, ||) and
+  /// Checks for both two-character operators (==, !=, <=, >=, &&, ||, ++, --) and
   /// single-character operators (+, -, *, /, %, <, >, =, !, ?, ., ^).
-  bool _isOperator(String s) => ['==', '!=', '<=', '>=', '&&', '||'].contains(s) || '+-*/%><=!?:.^'.contains(s);
+  bool _isOperator(String s) =>
+      ['==', '!=', '<=', '>=', '&&', '||', '++', '--', '+=', '-=', '*=', '/='].contains(s) ||
+      '+-*/%><=!?:.^'.contains(s);
 
   /// Returns true if the given character [c] is neither a letter nor a number.
   bool _isForbiddenChar(String c) => !_isLetter(c) && !_isNumber(c);

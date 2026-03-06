@@ -13,6 +13,14 @@ class FunctionRegistry {
   /// Internal map storing registered functions by name.
   static final Map<String, RuntimeFunction> _functions = {};
 
+  /// Gets the internal functions map for testing purposes.
+  static Map<String, RuntimeFunction> get functions => _functions;
+
+  /// Clears all registered functions from the registry.
+  static void clear() {
+    _functions.clear();
+  }
+
   /// Registers a function with the given name.
   ///
   /// [name] The identifier used to look up the function.

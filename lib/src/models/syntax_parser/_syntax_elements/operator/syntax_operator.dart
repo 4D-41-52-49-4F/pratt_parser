@@ -60,13 +60,26 @@ sealed class SyntaxOperator {
     '||' => const OrOperator._(),
     '?' => const ConditionOperator._(),
     ':' => const ElseOperator._(),
-    '=' => const AssignmentOperator._(),
+    '=' => const SimpleAssignmentOperator._(),
+    '+=' => const AdditionAssignmentOperator._(),
+    '-=' => const SubtractionAssignmentOperator._(),
+    '*=' => const MultiplicationAssignmentOperator._(),
+    '/=' => const DivisionAssignmentOperator._(),
     (_) => throw Exception('Operator not defined: $symbol'),
   };
 
   /// Returns a string representation of this operator.
   @override
   String toString() => 'SyntaxOperator($symbol, $precedence, $associativity)';
+}
+
+/// Base class for assignment operators.
+///
+/// Assignment operators perform an operation on the left operand and assign the result to the left operand. Examples include simple assignment (=) and compound assignments (+=, -=).
+/// Note: Assignment operators typically have the lowest precedence and right associativity, meaning they are evaluated after all other operators and group from right to left.
+sealed class AssignmentOperator extends SyntaxOperator {
+  /// Creates a new [AssignmentOperator] instance.
+  const AssignmentOperator({required super.symbol, required super.associativity}) : super(precedence: 0);
 }
 
 /// Base class for unary operators.
@@ -87,6 +100,8 @@ sealed class UnaryOperator extends SyntaxOperator {
   factory UnaryOperator.fromSymbol(String symbol) => switch (symbol) {
     '!' => const NotOperator._(),
     '-' => const UnaryMinusOperator._(),
+    '++' => const IncrementOperator._(),
+    '--' => const DecrementOperator._(),
     (_) => throw Exception('Unexpected binary operator: $symbol'),
   };
 }
@@ -152,7 +167,7 @@ sealed class LogicalOperator extends BinaryOperator {
 /// Has the highest precedence (9) and right associativity.
 final class DotOperator extends SyntaxOperator {
   /// Creates a new [DotOperator] instance.
-  const DotOperator._() : super(symbol: '.', precedence: 9, associativity: Associativity.right);
+  const DotOperator._() : super(symbol: '.', precedence: 10, associativity: Associativity.right);
 }
 
 /// Not operator (logical negation).
@@ -161,7 +176,7 @@ final class DotOperator extends SyntaxOperator {
 /// Has precedence 8 and right associativity.
 final class NotOperator extends UnaryOperator {
   /// Creates a new [NotOperator] instance.
-  const NotOperator._() : super(symbol: '!', precedence: 8, associativity: Associativity.right);
+  const NotOperator._() : super(symbol: '!', precedence: 9, associativity: Associativity.right);
 }
 
 /// Unary minus operator (arithmetic negation).
@@ -170,7 +185,28 @@ final class NotOperator extends UnaryOperator {
 /// Has precedence 8 and right associativity.
 final class UnaryMinusOperator extends UnaryOperator {
   /// Creates a new [UnaryMinusOperator] instance.
-  const UnaryMinusOperator._() : super(symbol: '-', precedence: 8, associativity: Associativity.right);
+  const UnaryMinusOperator._() : super(symbol: '-', precedence: 9, associativity: Associativity.right);
+}
+
+/// Increment operator (unary).
+///
+/// Increments the numeric value of its operand by 1 (e.g., `x++` becomes `x + 1`).
+/// Has precedence 8 and right associativity.
+/// Note: This operator is typically used in postfix form (e.g., `x++`) and may not be supported in all contexts.
+final class IncrementOperator extends UnaryOperator {
+  /// Creates a new [IncrementOperator] instance.
+  const IncrementOperator._() : super(symbol: '++', precedence: 9, associativity: Associativity.right);
+}
+
+/// Decrement operator (unary).
+///
+/// Decrements the numeric value of its operand by 1 (e.g., `x--` becomes `x - 1`).
+/// Has precedence 8 and right associativity.
+/// Note: This operator is typically used in postfix form (e.g., `x--`)
+/// and may not be supported in all contexts.
+final class DecrementOperator extends UnaryOperator {
+  /// Creates a new [DecrementOperator] instance.
+  const DecrementOperator._() : super(symbol: '--', precedence: 9, associativity: Associativity.right);
 }
 
 /// Exponent operator.
@@ -179,7 +215,7 @@ final class UnaryMinusOperator extends UnaryOperator {
 /// Has precedence 7 and right associativity.
 final class ExponentOperator extends ArithmeticOperator {
   /// Creates a new [ExponentOperator] instance.
-  const ExponentOperator._() : super(symbol: '^', precedence: 7, associativity: Associativity.right);
+  const ExponentOperator._() : super(symbol: '^', precedence: 8, associativity: Associativity.right);
 }
 
 /// Multiplication operator.
@@ -326,11 +362,53 @@ final class ElseOperator extends TernaryOperator {
   const ElseOperator._() : super(symbol: ':', precedence: 1, associativity: Associativity.right);
 }
 
-/// Assignment operator.
+/// Simple assignment operator (=).
 ///
 /// Assigns the value of the right operand to the left operand (e.g., `x = 5`).
 /// Has the lowest precedence (0) and right associativity.
-final class AssignmentOperator extends SyntaxOperator {
-  /// Creates a new [AssignmentOperator] instance.
-  const AssignmentOperator._() : super(symbol: '=', precedence: 0, associativity: Associativity.right);
+/// Note: This operator is typically used in assignment contexts and may not be supported in all expression contexts.
+/// This operator is represented by the [SimpleAssignmentOperator] class.
+final class SimpleAssignmentOperator extends AssignmentOperator {
+  /// Creates a new [SimpleAssignmentOperator] instance.
+  const SimpleAssignmentOperator._() : super(symbol: '=', associativity: Associativity.right);
+}
+
+/// Addition assignment operator (+=).
+///
+/// Adds the right operand to the left operand and assigns the result to the left operand (e.g., `x += 5` is equivalent to `x = x + 5`).
+/// Has precedence 0 and right associativity.
+/// Note: This operator is typically used in assignment contexts and may not be supported in all expression contexts.
+final class AdditionAssignmentOperator extends AssignmentOperator {
+  /// Creates a new [AdditionAssignmentOperator] instance.
+  const AdditionAssignmentOperator._() : super(symbol: '+=', associativity: Associativity.right);
+}
+
+/// Subtraction assignment operator (-=).
+///
+/// Subtracts the right operand from the left operand and assigns the result to the left operand (e.g., `x -= 5` is equivalent to `x = x - 5`).
+/// Has precedence 0 and right associativity.
+/// Note: This operator is typically used in assignment contexts and may not be supported in all expression contexts.
+final class SubtractionAssignmentOperator extends AssignmentOperator {
+  /// Creates a new [SubtractionAssignmentOperator] instance.
+  const SubtractionAssignmentOperator._() : super(symbol: '-=', associativity: Associativity.right);
+}
+
+/// Multiplication assignment operator (*=).
+///
+/// Multiplies the left operand by the right operand and assigns the result to the left operand (e.g., `x *= 5` is equivalent to `x = x * 5`).
+/// Has precedence 0 and right associativity.
+/// Note: This operator is typically used in assignment contexts and may not be supported in all expression contexts.
+final class MultiplicationAssignmentOperator extends AssignmentOperator {
+  /// Creates a new [MultiplicationAssignmentOperator] instance.
+  const MultiplicationAssignmentOperator._() : super(symbol: '*=', associativity: Associativity.right);
+}
+
+/// Division assignment operator (/=).
+///
+/// Divides the left operand by the right operand and assigns the result to the left operand (e.g., `x /= 5` is equivalent to `x = x / 5`).
+/// Has precedence 0 and right associativity.
+/// Note: This operator is typically used in assignment contexts and may not be supported in all expression contexts.
+final class DivisionAssignmentOperator extends AssignmentOperator {
+  /// Creates a new [DivisionAssignmentOperator] instance.
+  const DivisionAssignmentOperator._() : super(symbol: '/=', associativity: Associativity.right);
 }

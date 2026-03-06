@@ -6,6 +6,8 @@ void main() {
     test('returns correct unary operator for ! and -', () {
       expect(UnaryOperator.fromSymbol('!') is NotOperator, true);
       expect(UnaryOperator.fromSymbol('-') is UnaryMinusOperator, true);
+      expect(UnaryOperator.fromSymbol('++') is IncrementOperator, true);
+      expect(UnaryOperator.fromSymbol('--') is DecrementOperator, true);
     });
 
     test('throws when given a non-unary symbol', () {

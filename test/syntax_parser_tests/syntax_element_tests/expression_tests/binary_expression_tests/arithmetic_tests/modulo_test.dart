@@ -30,7 +30,7 @@ void main() {
 
       final result = expression.evaluate();
 
-      expect(result, isA<double>);
+      expect(result, isA<double>());
       expect(result, 0.0);
     });
 
@@ -42,7 +42,7 @@ void main() {
 
       final result = expression.evaluate();
 
-      expect(result, isA<double>);
+      expect(result, isA<double>());
       expect(result, 2.0);
     });
 
@@ -110,7 +110,7 @@ void main() {
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
 
       final result = expression.evaluate();
-      expect(result, isA<double>);
+      expect(result, isA<double>());
       expect(result, closeTo(1e-13, 1e-14));
     });
 

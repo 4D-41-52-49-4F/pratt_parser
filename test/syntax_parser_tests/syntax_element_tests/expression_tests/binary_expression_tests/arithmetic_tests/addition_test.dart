@@ -36,7 +36,7 @@ void main() {
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
       final result = expression.evaluate();
 
-      expect(result, isA<int>);
+      expect(result, isA<int>());
       expect(result, -4);
     });
 
@@ -47,7 +47,7 @@ void main() {
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
       final result = expression.evaluate();
 
-      expect(result, isA<int>);
+      expect(result, isA<int>());
       expect(result, -8);
     });
 
@@ -79,7 +79,7 @@ void main() {
       final expression = BinaryExpression(operator: operator, leftOperand: leftOperand, rightOperand: rightOperand);
       final result = expression.evaluate();
 
-      expect(result, isA<double>);
+      expect(result, isA<double>());
       expect(result, closeTo(3e-308, 1e-320));
     });
 
