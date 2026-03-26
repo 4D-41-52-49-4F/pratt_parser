@@ -11,7 +11,7 @@ class SyntaxParser {
   final String rule;
 
   /// The list of tokens produced by tokenizing the rule.
-  List<Token> _tokens = [];
+  late final List<Token> _tokens;
 
   /// The current position in the token list during parsing.
   int _pos = 0;

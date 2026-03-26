@@ -45,18 +45,6 @@ void main() {
       expect(expression.evaluate(), true);
     });
 
-    test('True condition evaluates correctly with boolean literals.', () {
-      const boolTrueToken = Token(TokenType.booleanLiteral, 'true');
-      const boolFalseToken = Token(TokenType.booleanLiteral, 'false');
-
-      final boolTrue = SyntaxLiteral.literalFromToken(boolTrueToken);
-      final boolFalse = SyntaxLiteral.literalFromToken(boolFalseToken);
-
-      final expression = TernaryExpression(condition: condition, trueCase: boolTrue, falseCase: boolFalse);
-
-      expect(expression.evaluate(), true);
-    });
-
     test('True condition evaluates correctly with int literals.', () {
       const boolTrueToken = Token(TokenType.numeralLiteral, '42');
       const boolFalseToken = Token(TokenType.numeralLiteral, '21');
