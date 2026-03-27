@@ -708,5 +708,55 @@ void main() {
         expect(tokens[1].lexeme, 'NULL');
       });
     });
+
+    group('Lexer - String Escape Sequence Tests', () {
+      const lexer = Lexer();
+
+      test('Tokenize string with escaped double quote', () {
+        final tokens = lexer.tokenize(r'"hello\"world\""');
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.stringLiteral);
+        expect(tokens[0].lexeme, r'hello\"world\"');
+      });
+
+      test('Tokenize string with escaped single quote', () {
+        final tokens = lexer.tokenize(r"'It\'s fine'");
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.stringLiteral);
+        expect(tokens[0].lexeme, r"It\'s fine");
+      });
+
+      test('Tokenize string with escaped backslash', () {
+        final tokens = lexer.tokenize(r'"C:\Program Files\App"');
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.stringLiteral);
+        expect(tokens[0].lexeme, r'C:\Program Files\App');
+      });
+
+      test('Tokenize string with newline escape', () {
+        final tokens = lexer.tokenize(r'"Hello\nWorld"');
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.stringLiteral);
+        expect(tokens[0].lexeme, r'Hello\nWorld');
+      });
+
+      test('Tokenize string with tab escape', () {
+        final tokens = lexer.tokenize(r'"Hello\tWorld"');
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.stringLiteral);
+        expect(tokens[0].lexeme, r'Hello\tWorld');
+      });
+
+      test('Tokenize string with multiple escape sequences', () {
+        final tokens = lexer.tokenize(r'"Line1\nLine2\tTabbed\\Backslash\""');
+        expect(tokens.length, 1);
+        expect(tokens[0].type, TokenType.stringLiteral);
+        expect(tokens[0].lexeme, r'Line1\nLine2\tTabbed\\Backslash\"');
+      });
+
+      test('Throw exception for unclosed escape at end', () {
+        expect(() => lexer.tokenize(r'"Hello World\'), throwsException);
+      });
+    });
   });
 }

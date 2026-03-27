@@ -280,7 +280,6 @@ void main() {
       VariableEnvironment.addOrUpdateVariable('pageViews', 0);
       VariableEnvironment.addOrUpdateVariable('clicks', 0);
 
-      // Simulate incrementing
       var views = VariableEnvironment.getValue('pageViews') as num;
       VariableEnvironment.addOrUpdateVariable('pageViews', views + 1);
 

@@ -31,8 +31,10 @@ class Lexer {
       if (_isStringDelimiter(c)) {
         final delimiter = c;
         final buffer = StringBuffer();
+        var isEscaped = false;
         i++;
-        while (i < input.length && input[i] != delimiter) {
+        while (i < input.length && (isEscaped || input[i] != delimiter)) {
+          isEscaped = input[i] == r'\';
           buffer.write(input[i]);
           i++;
         }
