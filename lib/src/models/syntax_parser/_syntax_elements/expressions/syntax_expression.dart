@@ -308,7 +308,7 @@ final class MemberExpression extends SyntaxExpression {
 ///
 /// This sealed class represents literal values such as strings, numbers,
 /// booleans, and null in the abstract syntax tree.
-sealed class SyntaxLiteral<T> extends SyntaxExpression {
+final class SyntaxLiteral<T> extends SyntaxExpression {
   /// The literal value stored in this expression.
   final T value;
 
@@ -327,11 +327,11 @@ sealed class SyntaxLiteral<T> extends SyntaxExpression {
   /// Throws an exception if the token type is not supported.
   static SyntaxLiteral<dynamic> literalFromToken(Token token, {bool identifierAsString = false}) =>
       switch (token.type) {
-        TokenType.stringLiteral => _StringLiteral._(token.lexeme),
-        TokenType.identifier => identifierAsString ? _StringLiteral._(token.lexeme) : throw _unsupported(),
-        TokenType.numeralLiteral => _NumeralLiteral._(num.parse(token.lexeme)),
-        TokenType.booleanLiteral => _BooleanLiteral._(bool.parse(token.lexeme, caseSensitive: false)),
-        TokenType.nullLiteral => const _NullLiteral._(null),
+        TokenType.stringLiteral => SyntaxLiteral<String>(token.lexeme),
+        TokenType.identifier => identifierAsString ? SyntaxLiteral<String>(token.lexeme) : throw _unsupported(),
+        TokenType.numeralLiteral => SyntaxLiteral<num>(num.parse(token.lexeme)),
+        TokenType.booleanLiteral => SyntaxLiteral<bool>(bool.parse(token.lexeme, caseSensitive: false)),
+        TokenType.nullLiteral => const SyntaxLiteral<Null>(null),
         (_) => throw _unsupported(),
       };
 
@@ -347,22 +347,6 @@ sealed class SyntaxLiteral<T> extends SyntaxExpression {
   // Prints the runtime type and value for easier debugging (e.g., StringLiteral(hello), NumeralLiteral(42)).
   // ignore: no_runtimetype_tostring
   String toString() => '$runtimeType($value)';
-}
-
-final class _BooleanLiteral extends SyntaxLiteral<bool> {
-  const _BooleanLiteral._(super.value);
-}
-
-final class _NumeralLiteral extends SyntaxLiteral<num> {
-  const _NumeralLiteral._(super.value);
-}
-
-final class _StringLiteral extends SyntaxLiteral<String> {
-  const _StringLiteral._(super.value);
-}
-
-final class _NullLiteral extends SyntaxLiteral<Null> {
-  const _NullLiteral._(super.value);
 }
 
 class _ExpressionValidator {
