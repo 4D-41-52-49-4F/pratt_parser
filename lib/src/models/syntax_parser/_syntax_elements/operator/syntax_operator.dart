@@ -167,7 +167,7 @@ sealed class LogicalOperator extends BinaryOperator {
 /// Has the highest precedence (9) and right associativity.
 final class DotOperator extends SyntaxOperator {
   /// Creates a new [DotOperator] instance.
-  const DotOperator._() : super(symbol: '.', precedence: 10, associativity: Associativity.right);
+  const DotOperator._() : super(symbol: '.', precedence: 10, associativity: Associativity.left);
 }
 
 /// Not operator (logical negation).
