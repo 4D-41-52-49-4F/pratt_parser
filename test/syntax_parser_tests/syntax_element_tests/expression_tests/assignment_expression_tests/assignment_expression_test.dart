@@ -1,7 +1,7 @@
-import 'package:abschlussprojekt/src/models/global_environment/_variable_environment/variable_environment.dart';
-import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/expressions/syntax_expression.dart';
-import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';
-import 'package:abschlussprojekt/src/models/syntax_parser/lexer.dart';
+import 'package:pratt_parser/src/models/global_environment/_variable_environment/variable_environment.dart';
+import 'package:pratt_parser/src/models/syntax_parser/_syntax_elements/expressions/syntax_expression.dart';
+import 'package:pratt_parser/src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';
+import 'package:pratt_parser/src/models/syntax_parser/lexer.dart';
 import 'package:test/test.dart';
 
 void main() {

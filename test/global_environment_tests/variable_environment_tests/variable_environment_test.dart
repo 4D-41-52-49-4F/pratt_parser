@@ -1,4 +1,4 @@
-import 'package:abschlussprojekt/src/models/global_environment/_variable_environment/variable_environment.dart';
+import 'package:pratt_parser/src/models/global_environment/_variable_environment/variable_environment.dart';
 import 'package:test/test.dart';
 
 void main() {

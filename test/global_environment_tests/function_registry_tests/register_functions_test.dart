@@ -1,5 +1,5 @@
 import 'dart:math' as math;
-import 'package:abschlussprojekt/src/models/global_environment/_function_registry/function_registry.dart';
+import 'package:pratt_parser/src/models/global_environment/_function_registry/function_registry.dart';
 import 'package:test/test.dart';
 
 void main() {

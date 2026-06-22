@@ -1,4 +1,4 @@
-import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';
+import 'package:pratt_parser/src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';
 import 'package:test/test.dart';
 
 void main() {

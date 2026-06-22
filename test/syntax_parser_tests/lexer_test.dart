@@ -1,4 +1,4 @@
-import 'package:abschlussprojekt/src/models/syntax_parser/lexer.dart';
+import 'package:pratt_parser/src/models/syntax_parser/lexer.dart';
 import 'package:test/test.dart';
 
 void main() {

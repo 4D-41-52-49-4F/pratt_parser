@@ -1,6 +1,6 @@
-import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/expressions/syntax_expression.dart';
-import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';
-import 'package:abschlussprojekt/src/models/syntax_parser/lexer.dart';
+import 'package:pratt_parser/src/models/syntax_parser/_syntax_elements/expressions/syntax_expression.dart';
+import 'package:pratt_parser/src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';
+import 'package:pratt_parser/src/models/syntax_parser/lexer.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -92,7 +92,9 @@ void main() {
     });
 
     test('-Infinity != -Infinity is false', () {
-      final leftOperand = SyntaxLiteral.literalFromToken(const Token(TokenType.numeralLiteral, '${double.negativeInfinity}'));
+      final leftOperand = SyntaxLiteral.literalFromToken(
+        const Token(TokenType.numeralLiteral, '${double.negativeInfinity}'),
+      );
       final rightOperand = SyntaxLiteral.literalFromToken(
         const Token(TokenType.numeralLiteral, '${double.negativeInfinity}'),
       );

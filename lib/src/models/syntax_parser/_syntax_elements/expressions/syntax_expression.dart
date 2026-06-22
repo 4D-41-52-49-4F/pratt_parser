@@ -1,9 +1,9 @@
 import 'dart:math';
 
-import 'package:abschlussprojekt/src/models/global_environment/_function_registry/function_registry.dart';
-import 'package:abschlussprojekt/src/models/global_environment/_variable_environment/variable_environment.dart';
-import 'package:abschlussprojekt/src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';
-import 'package:abschlussprojekt/src/models/syntax_parser/lexer.dart';
+import 'package:pratt_parser/src/models/global_environment/_function_registry/function_registry.dart';
+import 'package:pratt_parser/src/models/global_environment/_variable_environment/variable_environment.dart';
+import 'package:pratt_parser/src/models/syntax_parser/_syntax_elements/operator/syntax_operator.dart';
+import 'package:pratt_parser/src/models/syntax_parser/lexer.dart';
 
 /// Base class for all syntax expressions in the parser.
 ///
